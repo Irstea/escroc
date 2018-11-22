@@ -13,9 +13,7 @@
   \item{PFUnDA}{0 if left censored, NA if missing data, 1 otherwise}
   \item{X13C}{0 if left censored, NA if missing data, 1 otherwise}
   \item{X15N}{0 if left censored, NA if missing data, 1 otherwise}
-}
-
-#' @references Munoz et al. (2017) Evidence for the Trophic Transfer of Perfluoroalkylated Substances in a Temperate Macrotidal Estuary. Environmental Science & Technology: 51, 8450-8459}
+}}
 \source{
 \url{https://pubs.acs.org/doi/abs/10.1021/acs.est.7b02399}
 }
@@ -25,5 +23,8 @@ isLeftCensored
 \description{
 A table that contains a 0 to indicate that a measure is left-censored
 and 0 otherwise. Measures from Munoz et al. (2017)
+}
+\references{
+Munoz et al. (2017) Evidence for the Trophic Transfer of Perfluoroalkylated Substances in a Temperate Macrotidal Estuary. Environmental Science & Technology: 51, 8450-8459
 }
 \keyword{datasets}

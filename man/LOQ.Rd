@@ -24,7 +24,7 @@ LOQ
 }
 \description{
 Limit of quantifications estimated by Munoz et al. (2017). The number of lines
-is similar to the number of lines of \code{\link{signatures_data}} and gives for
+is similar to the number of lines of \code{\link{signature_data}} and gives for
 each individual and each tracer the limit of quantifications of the measures. In
 this experiment, the LOQ were similar for all individuals so that lines are all
 similar.
