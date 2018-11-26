@@ -10,11 +10,11 @@
 #' data(prior_diet_matrix)
 #' data(LOQ)
 #' data(prior_signature_data)
-#' prior_magnification <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+#' prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 #'
 #' #check that everything is ok
 #' mydata <- prepare_data(prior_diet_matrix,signature_data,prior_signature_data,isLeftCensored,
-#' LOQ,prior_magnification)
+#' LOQ,prior_delta)
 #'
 #' #build the model
 #' mymodel <- building_model(mydata)
@@ -23,16 +23,16 @@ building_model <- function(mydata) {
   priors_noise_regression <-
     "for (i in 1:nb_tracer){tau[i]~dgamma(0.01,0.01)}"
 
-  priors_magnification_no_prior <-
-    "for (i in 1:(nb_tracer-nb_prior_magnification)){
-  magnification_std[id_no_prior_magnification[i]]~dnorm(0,.1)
-  magnification[id_no_prior_magnification[i]]<-magnification_std[id_no_prior_magnification[i]]*sd_tracer[id_no_prior_magnification[i]]
+  priors_delta_no_prior <-
+    "for (i in 1:(nb_tracer-nb_prior_delta)){
+  delta_std[id_no_prior_delta[i]]~dnorm(0,.1)
+  delta[id_no_prior_delta[i]]<-delta_std[id_no_prior_delta[i]]*sd_tracer[id_no_prior_delta[i]]
 }"
 
-  priors_magnification_with_prior <-
-    "for (i in 1:(nb_prior_magnification)){
-  magnification[id_prior_magnification[i]]~dnorm(mu_prior_magnification[i],1/pow(sd_prior_magnification[i],2))
-  magnification_std[id_prior_magnification[i]]<-magnification[id_prior_magnification[i]]/sd_tracer[id_prior_magnification[i]]
+  priors_delta_with_prior <-
+    "for (i in 1:(nb_prior_delta)){
+  delta[id_prior_delta[i]]~dnorm(mu_prior_delta[i],1/pow(sd_prior_delta[i],2))
+  delta_std[id_prior_delta[i]]<-delta[id_prior_delta[i]]/sd_tracer[id_prior_delta[i]]
 }"
 
   signature_source_no_prior <-
@@ -73,7 +73,7 @@ for(ispe in c(id_consumer_multiple,id_consumer_single)){
   for (itra in 1:nb_tracer){
     random_effect[ispe,itra]~dnorm(0,1/pow(sigma_random[itra],2)) #random effect
     var_signature[ispe,itra]<-1/tau[itra]+inprod(var_signature[prey_id[ispe,1:nb_prey_per_species[ispe]],itra],diet[ispe,1:nb_prey_per_species[ispe]]*diet[ispe,1:nb_prey_per_species[ispe]]) #variance of the signature for each species and tracer
-    mean_signature_std[ispe,itra]<-inprod(diet[ispe,1:nb_prey_per_species[ispe]],mean_signature_std[prey_id[ispe,1:nb_prey_per_species[ispe]],itra])+random_effect[ispe,itra]+magnification_std[itra]
+    mean_signature_std[ispe,itra]<-inprod(diet[ispe,1:nb_prey_per_species[ispe]],mean_signature_std[prey_id[ispe,1:nb_prey_per_species[ispe]],itra])+random_effect[ispe,itra]+delta_std[itra]
     mean_signature[ispe,itra]<-(mean_signature_std[ispe,itra]*sd_tracer[itra])+mean_tracer[itra]
   }
 }"
@@ -91,8 +91,8 @@ return(
   paste(
     "model{",
     priors_noise_regression,
-    priors_magnification_no_prior,
-    ifelse(mydata$nb_prior_magnification > 0, priors_magnification_with_prior, ""),
+    priors_delta_no_prior,
+    ifelse(mydata$nb_prior_delta > 0, priors_delta_with_prior, ""),
     signature_source_no_prior,
     ifelse(mydata$nb_prior_signature > 0, signature_source_prior,""),
     diet,

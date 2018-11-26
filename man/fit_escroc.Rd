@@ -6,8 +6,8 @@
 This is the core funtion of the packages. It fits the model ESCROC using \code{\link[runjags]{run.jags}}
 and returns an \code{\link[coda]{mcmc.list}} object. ESCROC was described in Ballutaud et al. (in press).}
 \usage{
-fit_escroc(mydata, mymodel, burnin = 4000, sample = 10000,
-  adapt = 10000, method = "parallel", ...)
+fit_escroc(mydata, mymodel, burnin = 1000, sample = 1000,
+  adapt = 1000, method = "parallel", ...)
 }
 \arguments{
 \item{mydata}{a list as returned by function \code{\link{prepare_data}}}

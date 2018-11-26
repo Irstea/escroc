@@ -7,7 +7,7 @@
 #' @param prior_signature_data a data frame that contains data that can be used to build a prior signature for source species. First column should be names Species and second one tracer. Species and tracers should be consistent with signature_data. Then, the three following columns correpond to the mean signature, the standard deviation and the number of samples.
 #' @param isLeftCensored a data frame with the same number of rows as signature_data and one column per tracer. For each measure from the signature_data, tells if the observation is left censored (0) or not (1). Put NA for missing data
 #' @param LOQ same structure as isLeftCensored. Gives the limit of detection of limit of quantification of the corresponding measure
-#' @param prior_magnification a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation
+#' @param prior_delta a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation
 #'
 #' @return a named list that contains formatted object that will be used by jags to fit the model
 #' @examples
@@ -15,11 +15,11 @@
 #' data(prior_diet_matrix)
 #' data(LOQ)
 #' data(prior_signature_data)
-#' prior_magnification <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+#' prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 #'
 #' #check that everything is ok
 #' mydata <- prepare_data(prior_diet_matrix,signature_data,prior_signature_data,
-#' isLeftCensored,LOQ,prior_magnification)
+#' isLeftCensored,LOQ,prior_delta)
 #' @export
 prepare_data <-
   function(prior_diet_matrix,
@@ -27,7 +27,7 @@ prepare_data <-
            prior_signature_data = NULL,
            isLeftCensored,
            LOQ,
-           prior_magnification = NULL) {
+           prior_delta = NULL) {
     #check that data are correctly formated
     checking_data(
       prior_diet_matrix,
@@ -35,7 +35,7 @@ prepare_data <-
       prior_signature_data,
       isLeftCensored,
       LOQ,
-      prior_magnification
+      prior_delta
     )
 
     #retrieve the tracer list
@@ -122,13 +122,13 @@ prepare_data <-
     id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
                                                     id_prior_signature]
 
-    #formatting prior magnification data. A scaling is required to be constistent with signature_data
-    id_prior_magnification <- match(prior_magnification$tracer, tracer_name)
-    id_no_prior_magnification <- 1:nb_tracer
-    id_no_prior_magnification <- id_no_prior_magnification[!id_no_prior_magnification %in% id_prior_magnification]
-    mu_prior_magnification <- prior_magnification$mean
-    sd_prior_magnification <- prior_magnification$sd
-    nb_prior_magnification <- nrow(prior_magnification)
+    #formatting prior delta data. A scaling is required to be constistent with signature_data
+    id_prior_delta <- match(prior_delta$tracer, tracer_name)
+    id_no_prior_delta <- 1:nb_tracer
+    id_no_prior_delta <- id_no_prior_delta[!id_no_prior_delta %in% id_prior_delta]
+    mu_prior_delta <- prior_delta$mean
+    sd_prior_delta <- prior_delta$sd
+    nb_prior_delta <- nrow(prior_delta)
 
     return(
       list(
@@ -157,11 +157,11 @@ prepare_data <-
         sd_prior_signature = sd_prior_signature,
         n_prior_signature = n_prior_signature,
         nb_combinations = nb_combinations,
-        mu_prior_magnification = mu_prior_magnification,
-        sd_prior_magnification = sd_prior_magnification,
-        id_prior_magnification = id_prior_magnification,
-        id_no_prior_magnification = id_no_prior_magnification,
-        nb_prior_magnification = nb_prior_magnification,
+        mu_prior_delta = mu_prior_delta,
+        sd_prior_delta = sd_prior_delta,
+        id_prior_delta = id_prior_delta,
+        id_no_prior_delta = id_no_prior_delta,
+        nb_prior_delta = nb_prior_delta,
         alpha_diet = alpha_diet
 
       )

@@ -6,7 +6,7 @@
 #' @param prior_signature_data a data frame that contains data that can be used to build a prior signature for source species. First column should be names Species and second one tracer. Species and tracers should be consistent with signature_data. Then, the three following columns correpond to the mean signature, the standard deviation and the number of samples.
 #' @param isLeftCensored a data frame with the same number of rows as signature_data and one column per tracer. For each measure from the signature_data, tells if the observation is left censored (0) or not (1). Put NA for missing data
 #' @param LOQ same structure as isLeftCensored. Gives the limit of detection of limit of quantification of the corresponding measure
-#' @param prior_magnification a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation
+#' @param prior_delta a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation
 #'
 #' @return The function does not return any results but raises an error if a missformat is detected
 #' @examples
@@ -25,7 +25,7 @@ checking_data <-
            signature_data,
            prior_signature_data = NULL,
            isLeftCensored,
-           LOQ,prior_magnification=NULL) {
+           LOQ,prior_delta=NULL) {
     #check that prior_diet_matrix has similar species names in row and column
     if (!all(rownames(prior_diet_matrix) == colnames(prior_diet_matrix)))
       stop ("species names are different in row names and col names of the diet matrix")
@@ -91,14 +91,14 @@ checking_data <-
       stop ("names are not consistent between signature_data and LOQ")
 
 
-    #check the format the prior_magnification table
-    if (! is.null(prior_magnification)){
-      if(!(all(names(prior_magnification)==c("tracer","mean","sd")))) stop("incorrect names in prior_magnification")
+    #check the format the prior_delta table
+    if (! is.null(prior_delta)){
+      if(!(all(names(prior_delta)==c("tracer","mean","sd")))) stop("incorrect names in prior_delta")
       #check that tracers are correct
-      list_tracer_prior <- unique(prior_magnification$tracer)
+      list_tracer_prior <- unique(prior_delta$tracer)
       if (sum(is.na(match(
         list_tracer_prior, names(signature_data)
       ))) > 0)
-        stop ("some tracers in prior_magnification are not present in the signature table")
+        stop ("some tracers in prior_delta are not present in the signature table")
     }
   }

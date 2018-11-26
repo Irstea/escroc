@@ -6,8 +6,7 @@
 check that the data are correctly formated. This function can be called by the user and will be called by \code{\link{prepare_data}}}
 \usage{
 checking_data(prior_diet_matrix, signature_data,
-  prior_signature_data = NULL, isLeftCensored, LOQ,
-  prior_magnification = NULL)
+  prior_signature_data = NULL, isLeftCensored, LOQ, prior_delta = NULL)
 }
 \arguments{
 \item{prior_diet_matrix}{a square matrix with similar species as colnames and rownames. Species should be consistent with Species in signature_data and prior_signature_data}
@@ -20,7 +19,7 @@ checking_data(prior_diet_matrix, signature_data,
 
 \item{LOQ}{same structure as isLeftCensored. Gives the limit of detection of limit of quantification of the corresponding measure}
 
-\item{prior_magnification}{a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation}
+\item{prior_delta}{a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation}
 }
 \value{
 The function does not return any results but raises an error if a missformat is detected

@@ -5,8 +5,7 @@
 \title{preparation of the data}
 \usage{
 prepare_data(prior_diet_matrix, signature_data,
-  prior_signature_data = NULL, isLeftCensored, LOQ,
-  prior_magnification = NULL)
+  prior_signature_data = NULL, isLeftCensored, LOQ, prior_delta = NULL)
 }
 \arguments{
 \item{prior_diet_matrix}{a square matrix with similar species as colnames and rownames. Species should be consistent with Species in signature_data and prior_signature_data}
@@ -19,7 +18,7 @@ prepare_data(prior_diet_matrix, signature_data,
 
 \item{LOQ}{same structure as isLeftCensored. Gives the limit of detection of limit of quantification of the corresponding measure}
 
-\item{prior_magnification}{a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation}
+\item{prior_delta}{a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation}
 }
 \value{
 a named list that contains formatted object that will be used by jags to fit the model
@@ -32,9 +31,9 @@ prepares the data so that they can be used by jags to fit the model
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)
-prior_magnification <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 
 #check that everything is ok
 mydata <- prepare_data(prior_diet_matrix,signature_data,prior_signature_data,
-isLeftCensored,LOQ,prior_magnification)
+isLeftCensored,LOQ,prior_delta)
 }
