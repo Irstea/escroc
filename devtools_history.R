@@ -24,16 +24,11 @@ signature_data[,2:6]=log10(signature_data[,2:6])
 signature_data=subset(signature_data,!signature_data$Species %in% c("Oyster","Scrobicularia"))
 
 
-usethis::use_data(signature_data,signature_data,overwrite=TRUE)
 
 LOQ=c(log10(3*c(0.004,0.004,0.06,0.01,0.008)),c(0,-100))
 LOQ=matrix(LOQ,nrow=nrow(signature_data),ncol=ncol(signature_data)-1,byrow=TRUE)
 colnames(LOQ)=names(signature_data)[2:8]
 isLeftCensored=(!is.na(signature_data)[,-1])*1 #0 if left censored, 1 othewise
-
-usethis::use_data(isLeftCensored,isLeftCensored,overwrite=TRUE)
-usethis::use_data(LOQ,LOQ,overwrite=TRUE)
-usethis::use_data(prior_diet_matrix,prior_diet_matrix,overwrite=TRUE)
 
 data_val<-read.table(paste(marine_wd,"Gam_Cop_sources.csv",sep="/"),sep=";",header = TRUE)
 data_val<-subset(data_val,data_val$Zone=="OM")
@@ -51,6 +46,11 @@ prior_signature_data[4,3:5]=aggregation_prior[2,3]
 prior_signature_data[4,1:2]=c("Gammarids","X13C")
 
 usethis::use_data(prior_signature_data,prior_signature_data,overwrite=TRUE)
+usethis::use_data(signature_data,signature_data,overwrite=TRUE)
+usethis::use_data(isLeftCensored,isLeftCensored,overwrite=TRUE)
+usethis::use_data(LOQ,LOQ,overwrite=TRUE)
+usethis::use_data(prior_diet_matrix,prior_diet_matrix,overwrite=TRUE)
+usethis::use_vignette("Manual")
 
 checking_data(prior_diet_matrix,signature_data,prior_signature_data,isLeftCensored,LOQ)
 
