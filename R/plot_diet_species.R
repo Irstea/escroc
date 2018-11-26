@@ -1,4 +1,5 @@
 #' Plot diet
+#'
 #' Plot the diet composition of asked species
 #' @param myfit a fit as returned by \code{\link{fit_escroc}}
 #' @param mydata a list as returned by \code{\link{prepare_data}}

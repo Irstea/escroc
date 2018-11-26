@@ -1,4 +1,6 @@
 #' plot the full diet matrix
+#'
+#'
 #' Plot the full diet matrix. Each line corresponds to a predator and its column to the prey.
 #' The color of the circle corresponds to the quantile 50% of the contribution of the prey
 #' to the diet of the predator. The radius of the larger circle (respectively smaller circle)

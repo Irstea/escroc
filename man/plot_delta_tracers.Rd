@@ -2,8 +2,7 @@
 % Please edit documentation in R/plot_delta_tracers.R
 \name{plot_delta_tracers}
 \alias{plot_delta_tracers}
-\title{Plot Magnification / enrichment
-Plot the posterior distribution of magnification or enrichment for specified tracers}
+\title{Plot Magnification / enrichment}
 \usage{
 plot_delta_tracers(myfit, mydata, trac_names, transfo = list(NULL))
 }
@@ -21,7 +20,6 @@ to be plotted}
 a list of the same length as trac_names with a \code{\link[ggplot2]{ggplot}}
 }
 \description{
-Plot Magnification / enrichment
 Plot the posterior distribution of magnification or enrichment for specified tracers
 }
 \examples{
@@ -29,11 +27,11 @@ Plot the posterior distribution of magnification or enrichment for specified tra
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)
-prior_magnification <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 
 #check that everything is ok
 mydata <- prepare_data(prior_diet_matrix,signature_data,prior_signature_data,isLeftCensored,
-LOQ,prior_magnification)
+LOQ,prior_delta)
 
 #build the model
 mymodel <- building_model(mydata)

@@ -2,9 +2,7 @@
 % Please edit documentation in R/fit_escroc.R
 \name{fit_escroc}
 \alias{fit_escroc}
-\title{Fit the model
-This is the core funtion of the packages. It fits the model ESCROC using \code{\link[runjags]{run.jags}}
-and returns an \code{\link[coda]{mcmc.list}} object. ESCROC was described in Ballutaud et al. (in press).}
+\title{Fit the model}
 \usage{
 fit_escroc(mydata, mymodel, burnin = 1000, sample = 1000,
   adapt = 1000, method = "parallel", ...)
@@ -30,7 +28,6 @@ for further details}
 a \code{\link[coda]{mcmc.list}} storing the 3 MCMC
 }
 \description{
-Fit the model
 This is the core funtion of the packages. It fits the model ESCROC using \code{\link[runjags]{run.jags}}
 and returns an \code{\link[coda]{mcmc.list}} object. ESCROC was described in Ballutaud et al. (in press).
 }
@@ -39,15 +36,18 @@ and returns an \code{\link[coda]{mcmc.list}} object. ESCROC was described in Bal
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)
-prior_magnification <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 
 #check that everything is ok
 mydata <- prepare_data(prior_diet_matrix,signature_data,prior_signature_data,isLeftCensored,
-LOQ,prior_magnification)
+LOQ,prior_delta)
 
 #build the model
 mymodel <- building_model(mydata)
 
 #fit the model
 myresults <- fit_escroc(mydata, mymodel)
+}
+\references{
+Ballutaud et al. (in press) EStimating Contaminants tRansfers Over Complex food webs (ESCROC): an innovative Bayesian method for estimating POP's biomagnification in aquatic food webs. Science of the Total Environment
 }

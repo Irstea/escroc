@@ -2,9 +2,7 @@
 % Please edit documentation in R/generate_init.R
 \name{generate_init}
 \alias{generate_init}
-\title{Generate init
-This function is called by \code{\link{fit_escroc}} to
-generate relevant initials values for the 3 Markov chains.}
+\title{Generate init}
 \usage{
 generate_init(mydata)
 }
@@ -15,7 +13,6 @@ generate_init(mydata)
 a list of lists of initial values for MCMC chains
 }
 \description{
-Generate init
 This function is called by \code{\link{fit_escroc}} to
 generate relevant initials values for the 3 Markov chains.
 }

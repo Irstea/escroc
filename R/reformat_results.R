@@ -1,4 +1,5 @@
 #' Result formating
+#'
 #' This function is called by \code{\link{fit_escroc}} in order to format the
 #' results. This function should not be called directly by the user
 #'

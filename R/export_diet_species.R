@@ -1,4 +1,5 @@
 #' Export diet
+#'
 #' export the MCMC samples of diet for given species
 #' @param myfit a fit as returned by \code{\link{fit_escroc}}
 #' @param mydata a list as returned by \code{\link{prepare_data}}

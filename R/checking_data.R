@@ -1,5 +1,7 @@
 #' Checking data format
-#' check that the data are correctly formated. This function can be called by the user and will be called by \code{\link{prepare_data}}
+#'
+#' check that the data are correctly formated. This function can be called by the
+#' user and will be called by \code{\link{prepare_data}}
 #'
 #' @param prior_diet_matrix a square matrix with similar species as colnames and rownames. Species should be consistent with Species in signature_data and prior_signature_data
 #' @param signature_data a data frame. First column should be names species and followning columns should correspond to tracers. Data should be transformed first if required. Left censored data and missing data should be denoted NA

@@ -1,4 +1,5 @@
 #' Generate init
+#'
 #' This function is called by \code{\link{fit_escroc}} to
 #' generate relevant initials values for the 3 Markov chains.
 #'

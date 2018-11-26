@@ -2,8 +2,7 @@
 % Please edit documentation in R/plot_diet_species.R
 \name{plot_diet_species}
 \alias{plot_diet_species}
-\title{Plot diet
-Plot the diet composition of asked species}
+\title{Plot diet}
 \usage{
 plot_diet_species(myfit, mydata, spec_names)
 }
@@ -19,7 +18,6 @@ to be plotted}
 a list of the same length as spec_names with a \code{\link[ggplot2]{ggplot}}
 }
 \description{
-Plot diet
 Plot the diet composition of asked species
 }
 \examples{
@@ -27,11 +25,11 @@ Plot the diet composition of asked species
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)
-prior_magnification <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 
 #check that everything is ok
 mydata <- prepare_data(prior_diet_matrix,signature_data,prior_signature_data,isLeftCensored,
-LOQ,prior_magnification)
+LOQ,prior_delta)
 
 #build the model
 mymodel <- building_model(mydata)

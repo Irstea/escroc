@@ -1,4 +1,5 @@
 #' Fit the model
+#'
 #' This is the core funtion of the packages. It fits the model ESCROC using \code{\link[runjags]{run.jags}}
 #' and returns an \code{\link[coda]{mcmc.list}} object. ESCROC was described in Ballutaud et al. (in press).
 #'
@@ -13,6 +14,7 @@
 #' @param ... additionnal arguments that will be sent to \code{\link[runjags]{run.jags}}
 #'
 #' @return a \code{\link[coda]{mcmc.list}} storing the 3 MCMC
+#' @references Ballutaud et al. (in press) EStimating Contaminants tRansfers Over Complex food webs (ESCROC): an innovative Bayesian method for estimating POP's biomagnification in aquatic food webs. Science of the Total Environment
 #' @importFrom runjags run.jags
 #' @importFrom coda gelman.diag
 #' @importFrom coda varnames

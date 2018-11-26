@@ -1,4 +1,5 @@
 #' Plot Magnification / enrichment
+#'
 #' Plot the posterior distribution of magnification or enrichment for specified tracers
 #' @param myfit a fit as returned by \code{\link{fit_escroc}}
 #' @param mydata a list as returned by \code{\link{prepare_data}}

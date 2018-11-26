@@ -2,8 +2,7 @@
 % Please edit documentation in R/checking_data.R
 \name{checking_data}
 \alias{checking_data}
-\title{Checking data format
-check that the data are correctly formated. This function can be called by the user and will be called by \code{\link{prepare_data}}}
+\title{Checking data format}
 \usage{
 checking_data(prior_diet_matrix, signature_data,
   prior_signature_data = NULL, isLeftCensored, LOQ, prior_delta = NULL)
@@ -25,8 +24,8 @@ checking_data(prior_diet_matrix, signature_data,
 The function does not return any results but raises an error if a missformat is detected
 }
 \description{
-Checking data format
-check that the data are correctly formated. This function can be called by the user and will be called by \code{\link{prepare_data}}
+check that the data are correctly formated. This function can be called by the
+user and will be called by \code{\link{prepare_data}}
 }
 \examples{
 #importing data

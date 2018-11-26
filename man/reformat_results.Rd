@@ -2,9 +2,7 @@
 % Please edit documentation in R/reformat_results.R
 \name{reformat_results}
 \alias{reformat_results}
-\title{Result formating
-This function is called by \code{\link{fit_escroc}} in order to format the
-results. This function should not be called directly by the user}
+\title{Result formating}
 \usage{
 reformat_results(myfit, mydata)
 }
@@ -17,7 +15,6 @@ reformat_results(myfit, mydata)
 a formatted \code{\link[coda]{mcmc.list}}
 }
 \description{
-Result formating
 This function is called by \code{\link{fit_escroc}} in order to format the
 results. This function should not be called directly by the user
 }

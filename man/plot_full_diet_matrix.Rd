@@ -2,12 +2,7 @@
 % Please edit documentation in R/plot_full_diet_matrix.R
 \name{plot_full_diet_matrix}
 \alias{plot_full_diet_matrix}
-\title{plot the full diet matrix
-Plot the full diet matrix. Each line corresponds to a predator and its column to the prey.
-The color of the circle corresponds to the quantile 50% of the contribution of the prey
-to the diet of the predator. The radius of the larger circle (respectively smaller circle)
-corresponds to the quantile 97.5% (respectively 2.5%) of the contribution of the prey
-to the diet of the predator}
+\title{plot the full diet matrix}
 \usage{
 plot_full_diet_matrix(myfit, mydata)
 }
@@ -20,7 +15,6 @@ plot_full_diet_matrix(myfit, mydata)
 nothing
 }
 \description{
-plot the full diet matrix
 Plot the full diet matrix. Each line corresponds to a predator and its column to the prey.
 The color of the circle corresponds to the quantile 50% of the contribution of the prey
 to the diet of the predator. The radius of the larger circle (respectively smaller circle)
@@ -32,11 +26,11 @@ to the diet of the predator
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)
-prior_magnification <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 
 #check that everything is ok
 mydata <- prepare_data(prior_diet_matrix,signature_data,prior_signature_data,isLeftCensored,
-LOQ,prior_magnification)
+LOQ,prior_delta)
 
 #build the model
 mymodel <- building_model(mydata)
