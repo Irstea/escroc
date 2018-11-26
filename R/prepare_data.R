@@ -114,9 +114,9 @@ prepare_data <-
       paste(species_name[combinations$Species], tracer_name[combinations$tracer], sep =
               "__")
     )
-    mu_prior_signature <- (prior_signature_data$mean - mean_tracer[prior_signature_data$tracer]) /
-      sd_tracer[prior_signature_data$tracer]
-    sd_prior_signature <- prior_signature_data$sd / sd_tracer[prior_signature_data$tracer]
+    mu_prior_signature <- (prior_signature_data$mean - mean_tracer[as.character(prior_signature_data$tracer)]) /
+      sd_tracer[as.character(prior_signature_data$tracer)]
+    sd_prior_signature <- prior_signature_data$sd / sd_tracer[as.character(prior_signature_data$tracer)]
     n_prior_signature <- prior_signature_data$sd
     id_no_prior_signature <- 1:nrow(combinations)
     id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
