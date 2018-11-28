@@ -23,6 +23,7 @@ to the diet of the predator
 }
 \examples{
 #importing data
+data(signature_data)
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)

@@ -33,6 +33,7 @@ and returns an \code{\link[coda]{mcmc.list}} object. ESCROC was described in Bal
 }
 \examples{
 #importing data
+data(signature_data)
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)
@@ -47,6 +48,10 @@ mymodel <- building_model(mydata)
 
 #fit the model
 myresults <- fit_escroc(mydata, mymodel)
+
+#a summary of the results
+library(coda)
+summary(myresults)$qua
 }
 \references{
 Ballutaud et al. (in press) EStimating Contaminants tRansfers Over Complex food webs (ESCROC): an innovative Bayesian method for estimating POP's biomagnification in aquatic food webs. Science of the Total Environment

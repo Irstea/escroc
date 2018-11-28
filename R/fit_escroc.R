@@ -20,6 +20,7 @@
 #' @importFrom coda varnames
 #' @examples
 #' #importing data
+#' data(signature_data)
 #' data(prior_diet_matrix)
 #' data(LOQ)
 #' data(prior_signature_data)
@@ -34,13 +35,17 @@
 #'
 #' #fit the model
 #' myresults <- fit_escroc(mydata, mymodel)
+#'
+#' #a summary of the results
+#' library(coda)
+#' summary(myresults)$qua
 #' @export
 fit_escroc <- function(mydata,mymodel,burnin=1000,sample=1000,adapt=1000,method="parallel",...){
   myinits <- generate_init(mydata)
   res<-run.jags(model=mymodel,monitor = c("random_effect", "delta","mean_signature","diet"),data = mydata,n.chains = 3,adapt = adapt,burnin = burnin,sample=sample,
                summarise = FALSE,method = method,inits=myinits,...)
   myfit <- reformat_results(res,mydata)
-  gelman.diag(myfit,multivariate=FALSE)
+  print(gelman.diag(myfit,multivariate=FALSE))
   return(myfit)
 
 }

@@ -17,6 +17,7 @@ Based on data, this function build the jags model that will be used by runjages
 }
 \examples{
 #importing data
+data(signature_data)
 data(prior_diet_matrix)
 data(LOQ)
 data(prior_signature_data)
