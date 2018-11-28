@@ -36,5 +36,5 @@ data(prior_signature_data)
 
 #check that everything is ok
 checking_data(prior_diet_matrix,signature_data,
-prior_signature_data,isLeftCensored,LOQ)
+isLeftCensored,LOQ,prior_signature_data)
 }
