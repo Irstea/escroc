@@ -1,0 +1,155 @@
+---
+title: "Tutorial EscrocR"
+author: 
+- name: Hilaire Drouineau
+  affiliation:
+  - Irstea Bordeaux - UR EABX
+- name: Jérémy Lobry
+  affiliation:
+  - Irstea Bordeaux - UR EABX
+- name: Marine Ballutaud
+date: "`r Sys.Date()`"
+package: escrocR
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial EscrocR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(escrocR)
+```
+
+#Introduction
+This packages aims at fitting the model ESCROC [ref Marine]. ESCROC is a model that, similarly to clasical mixing models such as MIXSIAR [ref Mixsiar] estimates diet composition but works at the whole trophic network and simultaneously estimates contaminants biomagnification and isotopic enrichment in trophic network. ESCROC is a Bayesian model and as such allow for a rigorous consideration of sources of uncertainties such as measurement erros, missing data, interspecific variability, data censoring etc. To carry out the estimatation, ESCROC using measurements of concentration of contaminants and/or isotopic ratios made on a set of individuals from different species. Here, concentration of contaminants and isotopic ratios are considered to be tracers that can be used to inform on the diet of species: the signature of an individual (defined as the measured values for all tracers) is assumed to be a mixture of the signatures of its prey.
+
+#Prerequisites
+The model is fitted using the JAGS sampler [ref Plummer]. Consequently, JAGS should be installed before fitting the model.
+Moreover, the package uses different R packages to facilitate R JAGS and interractions and to explore results. Therefore, following packages should be installed: runjags [ref], ggplot2 [ref], coda [ref], reshape2 [ref] and corrplot [ref]. This can be done by running the following code in an R console.
+
+```{r, eval=FALSE}
+install.packages(c("reshape2","coda","runjags","ggplot2","corrplot"))
+```
+
+#Data preparation
+Different types of data are needed to fit ESCROC:
+- signature_data: a data frame that containes the signatures of all sampled individuals
+- prior_diet_matrix: a matrix that species which species can eat which species
+- LOQ: this matrix is used to specify the limit of detections or limit of quantifications to address censored data
+- isLeftCensored: an indicator specifying wether the value was indeed left censored (0) or an exact value (1)
+
+Moreover, prior information can optionnally be used:
+- prior_signature_data: a table to specify prior information on the signature of the species
+- prior_delta: a table to specify prior information on isotopic enrichment or contaminant biomagnification.
+
+The format of these different tables are described below.
+
+##Mandatory data
+###prior_diet_matrix
+prior_diet_matrix should be specified as a squared matrix with one row and one column per species in the studied trophic network. The names of the rows and the columns should correspond to the names of the species; please note that the names of the species should be written exactly in the same way in row names, column names, and in the signature_data and prior_signature_data tables.
+In the matrix, each row corresponds to a predator. If the value is set to zero, this means that the predator (in row) can't eat the prey (in column). If the value is strictly superior to zero, the prey can potentially eat the predator. These positive values will be latter used to build priors on the diet compositions (in the absence of prior information, a good solution is to put a one when a predation is possible and a zero otherwise). You should also be aware that ESCROC can not handle tophic networks including loops (for example a prey should not eat its predator, or a predator of its predator...). The presence of the loop will be detected when preparing the data and an error will be thrown.
+
+An example of matrix is provided in the package, coming from [ref Marine]
+```{r}
+data(prior_diet_matrix)
+print(prior_diet_matrix)
+```
+
+In this example, Anchovy is thought to predate Mysids, Gammarids and Copepods; since they eat multiple species, we call this type of species "multiple consumer". Copepods do not eat any species, we call this type of species "source species". Mysids only eat Copepods, consequently their diet is known (no inference is required) and we call this type of species "single consumer". Source species, multiple consumers and single consumers will be automatically detected by the package when preparing the data.
+
+###signature_data
+This data.frame contains signatures measurements for all individuals. Each row corresponds to an indivual. The first column should be named "Species" and identify the species of all individuals. Species should match species from the prior_diet_matrix. The other columns correspond to the different tracers (as many as possible) and their names will be used to identify tracers in prior_delta and LOQ. Missing data or censored data should be specified as NA. Tracers should be transformed if required, to ensure that tracer value increase linearly with trophic level in average. The slope of this linear regression (isotopic enrichment for isotopic ratio, contaminant biomagnification for contaminants) is called delta in the rest of the document, consistently with [ref Marine]
+
+An example from [ref Munoz] is provided in the package:
+
+```{r}
+data(signature_data)
+summary(signature_data)
+```
+
+In this example, 138 individuals were sampled from 16 species. You can check that the names of the species match the row and column names from prior_diet_matrix. Concentrations in 5 contaminants and isotopic ratio in carbon and nitrogen were measured on each indivudal. Some measurements were left censored, i.e. below the limit of quantification: 51 for PFOA, 10 for PFNA and 11 for NA. Concentrations in contaminants were log10 transformed since log concentration of these contaminants is assumed to increase linearly with trophic level.
+
+###LOQ
+This data frame should have the same numbers of row as signature_data (one per individual), and one column per contaminant. Names of the columns should match the names of the tracers in signature_data. The values correspond for the limit of the quantification / detection (transformed if required, see previous section) for each measurement. If a value is not missing in signature_data, then the corresponding value in LOQ should be smaller (this means that the measurement is above the limit of detection). For NA in signature_data, if a value is provided in LOQ then the model considers that the exact value is not known but is below the LOQ (a so called left censored data). If both signature_data and LOQ are NA, then the data is considered as a completely missing data (to be checked). 
+
+An example from [ref Munoz] is provided in the package:
+
+```{r}
+data(LOQ)
+head(LOQ)
+```
+
+Here values were similar for all individuals since the LOQ were constant. You can see that column names match column names from signature_data, and that contaminants LOQ were log10 transformed. Carbon and Nitrogen LOQ were not known but set to very small values since all measurements correponds to exact values.
+
+
+###isLeftCensored
+This data.frame has a similar than LOQ (so be careful with the names of the columns that should match tracers names in signature_data), and is filled with a 1 if the value is a true value or a 0 if it left censored.
+
+
+An example from [ref Munoz] is provided in the package:
+
+```{r}
+data(isLeftCensored)
+head(isLeftCensored)
+```
+
+Note that this data frame can in most situations be built using the following code
+
+```{r}
+myLeftCensored <- (!(is.na(signature_data[,-1]) & !is.na(LOQ))) *1
+head(myLeftCensored)
+```
+
+##Optionnal data
+###prior_delta
+If information on the isotopic enrichement or on the contaminant biomagnification pre-exits (i.e. based on independant data sources), they can be used as priors in the analysis. It should be specified as a data.frame with the first column, named tracer, which indicated on which tracer we want to provide information (the values should be consistent with column names from signature_data), and a column mean and a column standard deviation that will parametrize the normal prior use for the correponding delta.
+
+
+```{r}
+prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+prior_delta
+```
+
+In this example, based on existing literature, we decided to set two normal priors for nitrogen and carbon isotopic ratios with mean respecively 3 and 0, and standard deviations 1 for both. Since no priors are provided for contaminants, the model will automatically used uninformative priors.
+
+###prior_signature_data
+For source species (i.e. species that do not eat any other species, such as Copepods, Gammarids, Nereis and Crabs in the current example), we can also provide prior information on their mean signatures (i.e. information coming from independent data: litterature, former experiments etc.). This is done by providing a data.frame, with a first column names "Species" (species names should once again match species names from diet_matrix), a second column names "tracer" (which should match column names from signature_data), then a column "mean" (mean value in pre-existing samples), "sd" (standard deviation in prexisting sample), and a last column "n" (number of individual in the pre-existing samples). The form of the corresponding prior is detailed in [ref Marine]
+
+Here we provide an example coming from [ref valérie]
+
+```{r}
+data(prior_signature_data)
+prior_signature_data
+```
+
+Here we defined average signatures in carbon and nitrogen isotopic ratios for Copepods and Gammarids, based on 41 indviduals for Copepods (here we had the same values for nitrogen and carbon, but this is not compulsory) and 7 for Gammarids. For other tracers and source species, a non informative priors will be used.
+
+#Running the data
+##Running the model
+Once all data are available and formatted as detailed, the first step is to convert them into a format that can be understood by JAGS and that facilitate model fitting. This is done by using the function prepare_data, that returns a list containing data ready to be used by JAGS. The function also make some check (species and tracers names are consistent among column, absence of loops in the prior_diet_matrix) and returns informative error message if an error is detected.
+
+Here is the code to prepare the data:
+
+```{r}
+mydata <- prepare_data(prior_diet_matrix,signature_data,isLeftCensored,LOQ,prior_signature_data,prior_delta)
+```
+
+Note that the two last arguments are optionnal and should be provided only if prior information exists. mydata is a list that contains all the information on the observation and on the structure of the trophic network and which can then be used to build the model by itself, using the function building_model:
+
+```{r}
+mymodel <- building_model(mydata)
+```
+
+The function returns a string thats describes the model in JAGS language. The model is adapted to handle prior data if available.
+Once data is ready and the model built, the model can be fitted using the function fit_escroc which is the core function of the package.
+
+```{r}
+myresults <- fit_escroc(mydata, mymodel,burnin=1000,adapt=500,sample=1000)
+```
+This function fits the model. Here we run the Markov Chain for 500 iteration as an adaptive phase, then 1000 iterations as burnin to ensure the chains converged (this is not the case here but we put this value as a fast running examples before sampling 500 iterations). 
