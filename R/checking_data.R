@@ -20,7 +20,7 @@
 #'
 #' #check that everything is ok
 #' checking_data(prior_diet_matrix,signature_data,
-#' prior_signature_data,isLeftCensored,LOQ)
+#' isLeftCensored,LOQ,prior_signature_data)
 #' @export
 checking_data <-
   function(prior_diet_matrix,
