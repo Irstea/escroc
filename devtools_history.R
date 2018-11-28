@@ -25,7 +25,7 @@ signature_data=subset(signature_data,!signature_data$Species %in% c("Oyster","Sc
 
 
 
-LOQ=c(log10(3*c(0.004,0.004,0.06,0.01,0.008)),c(0,-100))
+LOQ=c(log10(3*c(0.004,0.004,0.06,0.01,0.008)),c(-100,0))
 LOQ=matrix(LOQ,nrow=nrow(signature_data),ncol=ncol(signature_data)-1,byrow=TRUE)
 colnames(LOQ)=names(signature_data)[2:8]
 isLeftCensored=(!is.na(signature_data)[,-1])*1 #0 if left censored, 1 othewise
