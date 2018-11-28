@@ -5,9 +5,9 @@
 #'
 #' @param prior_diet_matrix a square matrix with similar species as colnames and rownames. Species should be consistent with Species in signature_data and prior_signature_data
 #' @param signature_data a data frame. First column should be names species and followning columns should correspond to tracers. Data should be transformed first if required. Left censored data and missing data should be denoted NA
-#' @param prior_signature_data a data frame that contains data that can be used to build a prior signature for source species. First column should be names Species and second one tracer. Species and tracers should be consistent with signature_data. Then, the three following columns correpond to the mean signature, the standard deviation and the number of samples.
 #' @param isLeftCensored a data frame with the same number of rows as signature_data and one column per tracer. For each measure from the signature_data, tells if the observation is left censored (0) or not (1). Put NA for missing data
 #' @param LOQ same structure as isLeftCensored. Gives the limit of detection of limit of quantification of the corresponding measure
+#' @param prior_signature_data a data frame that contains data that can be used to build a prior signature for source species. First column should be names Species and second one tracer. Species and tracers should be consistent with signature_data. Then, the three following columns correpond to the mean signature, the standard deviation and the number of samples.
 #' @param prior_delta a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation
 #'
 #' @return The function does not return any results but raises an error if a missformat is detected
@@ -19,15 +19,16 @@
 #' data(prior_signature_data)
 #'
 #' #check that everything is ok
-#' checking_data(prior_diet_matrix,signature_data,prior_signature_data,
-#' isLeftCensored,LOQ)
+#' checking_data(prior_diet_matrix,signature_data,
+#' prior_signature_data,isLeftCensored,LOQ)
 #' @export
 checking_data <-
   function(prior_diet_matrix,
            signature_data,
-           prior_signature_data = NULL,
            isLeftCensored,
-           LOQ,prior_delta=NULL) {
+           LOQ,
+           prior_signature_data = NULL,
+           prior_delta = NULL) {
     #check that prior_diet_matrix has similar species names in row and column
     if (!all(rownames(prior_diet_matrix) == colnames(prior_diet_matrix)))
       stop ("species names are different in row names and col names of the diet matrix")
@@ -85,7 +86,7 @@ checking_data <-
     #check that tracers names match in LOQ, is Above, signature and prior
     if (!all(dim(isLeftCensored) == dim(LOQ)))
       stop ("LOQ and isLeftCensored should have similar dimensions")
-    if (!all(dim(isLeftCensored) == dim(signature_data[, -1])))
+    if (!all(dim(isLeftCensored) == dim(signature_data[,-1])))
       stop ("inconsistent dimentions between isLeftcensored and signature")
     if (!all(sort(names(isLeftCensored)) == sort(names(names(signature_data)))))
       stop ("names are not consistent between signature_data and isLeftCensored")
@@ -94,8 +95,9 @@ checking_data <-
 
 
     #check the format the prior_delta table
-    if (! is.null(prior_delta)){
-      if(!(all(names(prior_delta)==c("tracer","mean","sd")))) stop("incorrect names in prior_delta")
+    if (!is.null(prior_delta)) {
+      if (!(all(names(prior_delta) == c("tracer", "mean", "sd"))))
+        stop("incorrect names in prior_delta")
       #check that tracers are correct
       list_tracer_prior <- unique(prior_delta$tracer)
       if (sum(is.na(match(
