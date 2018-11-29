@@ -4,8 +4,7 @@
 #'
 #' @param prior_diet_matrix a square matrix with similar species as colnames and rownames. Species should be consistent with Species in signature_data and prior_signature_data
 #' @param signature_data a data frame. First column should be names species and followning columns should correspond to tracers. Data should be transformed first if required. Left censored data and missing data should be denoted NA
-#' @param isLeftCensored a data frame with the same number of rows as signature_data and one column per tracer. For each measure from the signature_data, tells if the observation is left censored (0) or not (1). Put NA for missing data
-#' @param LOQ same structure as isLeftCensored. Gives the limit of detection of limit of quantification of the corresponding measure
+#' @param LOQ a data frame with the same number of rows as signature_data and one column per tracer. Gives the limit of detection of limit of quantification of the corresponding measure
 #' @param prior_signature_data a data frame that contains data that can be used to build a prior signature for source species. First column should be names Species and second one tracer. Species and tracers should be consistent with signature_data. Then, the three following columns correpond to the mean signature, the standard deviation and the number of samples.
 #' @param prior_delta a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation
 #'
@@ -19,12 +18,11 @@
 #'
 #' #check that everything is ok
 #' mydata <- prepare_data(prior_diet_matrix,signature_data,
-#' isLeftCensored,LOQ,prior_signature_data,prior_delta)
+#' LOQ,prior_signature_data,prior_delta)
 #' @export
 prepare_data <-
   function(prior_diet_matrix,
            signature_data,
-           isLeftCensored,
            LOQ,
            prior_signature_data = NULL,
            prior_delta = NULL) {
@@ -32,7 +30,6 @@ prepare_data <-
     checking_data(
       prior_diet_matrix,
       signature_data,
-      isLeftCensored,
       LOQ,
       prior_signature_data,
       prior_delta
@@ -129,6 +126,10 @@ prepare_data <-
     mu_prior_delta <- prior_delta$mean
     sd_prior_delta <- prior_delta$sd
     nb_prior_delta <- nrow(prior_delta)
+
+
+    #creation of an indicator matrix telling if the data is left censored
+    isLeftCensored <- (!(is.na(signature_data[,-1]) & LOQ)) *1
 
     return(
       list(

@@ -14,7 +14,7 @@
 #' prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 #'
 #' #check that everything is ok
-#' mydata <- prepare_data(prior_diet_matrix,signature_data,isLeftCensored,
+#' mydata <- prepare_data(prior_diet_matrix,signature_data,
 #' LOQ,prior_signature_data, prior_delta)
 #'
 #' #build the model

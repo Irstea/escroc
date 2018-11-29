@@ -49,28 +49,6 @@
 
 
 
-#' Indicators of left censoring
-#'
-#' A table that contains a 0 to indicate that a measure is left-censored
-#' and 0 otherwise. Measures from Munoz et al. (2017)
-#'
-#' @format A data frame with 53940 rows and 10 variables:
-#' \describe{
-#'   \item{FOSA}{0 if left censored, NA if missing data, 1 otherwise}
-#'   \item{L.PFOS}{0 if left censored, NA if missing data, 1 otherwise}
-#'   \item{PFNA}{0 if left censored, NA if missing data, 1 otherwise}
-#'   \item{PFOA}{0 if left censored, NA if missing data, 1 otherwise}
-#'   \item{PFUnDA}{0 if left censored, NA if missing data, 1 otherwise}
-#'   \item{X13C}{0 if left censored, NA if missing data, 1 otherwise}
-#'   \item{X15N}{0 if left censored, NA if missing data, 1 otherwise}
-#' }
-#'
-#' @references Munoz et al. (2017) Evidence for the Trophic Transfer of Perfluoroalkylated Substances in a Temperate Macrotidal Estuary. Environmental Science & Technology: 51, 8450-8459
-#'
-#' @source \url{https://pubs.acs.org/doi/abs/10.1021/acs.est.7b02399}
-"isLeftCensored"
-
-
 #' Measurement from previous studies
 #'
 #' This table summarizes measurements made by David (2006). Each line gives

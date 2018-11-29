@@ -30,7 +30,6 @@ min_signature=matrix(apply(signature_data[,-1],2,min,na.rm=TRUE),nrow=nrow(signa
 LOQ=matrix(LOQ,nrow=nrow(signature_data),ncol=ncol(signature_data)-1,byrow=TRUE)
 LOQ[!is.na(signature_data[,-1])]=min_signature[!is.na(signature_data[,-1])]
 colnames(LOQ)=names(signature_data)[2:8]
-isLeftCensored=(!is.na(signature_data)[,-1])*1 #0 if left censored, 1 othewise
 
 data_val<-read.table(paste(marine_wd,"Gam_Cop_sources.csv",sep="/"),sep=";",header = TRUE)
 data_val<-subset(data_val,data_val$Zone=="OM")
@@ -49,11 +48,10 @@ prior_signature_data[4,1:2]=c("Gammarids","X13C")
 
 usethis::use_data(prior_signature_data,prior_signature_data,overwrite=TRUE)
 usethis::use_data(signature_data,signature_data,overwrite=TRUE)
-usethis::use_data(isLeftCensored,isLeftCensored,overwrite=TRUE)
 usethis::use_data(LOQ,LOQ,overwrite=TRUE)
 usethis::use_data(prior_diet_matrix,prior_diet_matrix,overwrite=TRUE)
 usethis::use_vignette("Manual")
 
-checking_data(prior_diet_matrix,signature_data,prior_signature_data,isLeftCensored,LOQ)
+checking_data(prior_diet_matrix,signature_data,prior_signature_data,LOQ)
 
 document()
