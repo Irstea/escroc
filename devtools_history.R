@@ -52,6 +52,19 @@ usethis::use_data(LOQ,LOQ,overwrite=TRUE)
 usethis::use_data(prior_diet_matrix,prior_diet_matrix,overwrite=TRUE)
 usethis::use_vignette("Manual")
 
-checking_data(prior_diet_matrix,signature_data,prior_signature_data,LOQ)
+library(escrocR)
+checking_data(prior_diet_matrix,signature_data,LOQ,prior_signature_data)
+prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
+
+#check that everything is ok
+mydata <- prepare_data(prior_diet_matrix,signature_data,
+ LOQ,prior_signature_data,prior_delta)
+#build the model
+mymodel <- building_model(mydata)
+#fit the model
+myresults <- fit_escroc(mydata, mymodel,burnin=1e6,adapt=10000,sample=50000)
+myresults <- window(myresults,thin=10)
+usethis::use_data(myresults,myresults,overwrite=TRUE)
+
 
 document()

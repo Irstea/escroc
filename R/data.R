@@ -82,5 +82,12 @@
 #' @references Ballutaud et al. (in press) EStimating Contaminants tRansfers Over Complex food webs (ESCROC): an innovative Bayesian method for estimating POP's biomagnification in aquatic food webs. Science of the Total Environment
 "prior_diet_matrix"
 
+#' Example of results
+#'
+#' An example of results send by \code{\link{fit_escroc}} with burnin=1e6, adapt=10000,sample=50000 and thin=10
+#'
+#' @format a mcmc.list
+"myresults"
+
 
 

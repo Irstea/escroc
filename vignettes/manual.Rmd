@@ -10,7 +10,9 @@ author:
 - name: Marine Ballutaud
 date: "`r Sys.Date()`"
 package: escrocR
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette: default
+  pdf_document: default
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{Tutorial EscrocR}
@@ -39,20 +41,20 @@ install.packages(c("reshape2","coda","runjags","ggplot2","corrplot"))
 ```
 
 #Data preparation
-Different types of data are needed to fit ESCROC:
-- signature_data(#signature_data): a data frame that containes the signatures of all sampled individuals
-- prior_diet_matrix(#prior_diet_matrix): a matrix that species which species can eat which species
-- LOQ(#LOQ): this matrix is used to specify the limit of detections or limit of quantifications to address censored data
+Different types of data are needed to fit ESCROC:  
+- [signature_data](#signature_data): a data frame that containes the signatures of all sampled individuals  
+- [prior_diet_matrix](#prior_diet_matrix): a matrix that species which species can eat which species  
+- [LOQ](#LOQ): this matrix is used to specify the limit of detections or limit of quantifications to address censored data  
 
-Moreover, prior information can optionnally be used:
-- prior_signature_data(#prior_signature_data): a table to specify prior information on the signature of the species
-- prior_delta(#prior_delta): a table to specify prior information on isotopic enrichment or contaminant biomagnification.  
-
+Moreover, prior information can optionnally be used:  
+- [prior_signature_data](#prior_signature_data): a table to specify prior information on the signature of the species  
+- [prior_delta](#prior_delta): a table to specify prior information on isotopic enrichment or contaminant biomagnification.  
+  
 The format of these different tables are described below.  
 
 ##Mandatory data
 ###prior_diet_matrix {#prior_data_matrix}
-prior_diet_matrix should be specified as a squared matrix with one row and one column per species in the studied trophic network. The names of the rows and the columns should correspond to the names of the species; please note that the names of the species should be written exactly in the same way in row names, column names, and in the signature_data(#signature_data) and prior_signature_data(#prior_signature_data) tables.  
+prior_diet_matrix should be specified as a squared matrix with one row and one column per species in the studied trophic network. The names of the rows and the columns should correspond to the names of the species; please note that the names of the species should be written exactly in the same way in row names, column names, and in the [signature_data](#signature_data) and [prior_signature_data](#prior_signature_data) tables.  
 In the matrix, each row corresponds to a predator. If the value is set to zero, this means that the predator (in row) can't eat the prey (in column). If the value is strictly superior to zero, the prey can potentially eat the predator. These positive values will be latter used to build priors on the diet compositions (in the absence of prior information, a good solution is to put a one when a predation is possible and a zero otherwise). You should also be aware that ESCROC can not handle tophic networks including loops (for example a prey should not eat its predator, or a predator of its predator...). The presence of the loop will be detected when preparing the data and an error will be thrown.  
 
 An example of matrix is provided in the package, coming from [@ballutaud_estimating_nodate]  
@@ -64,7 +66,7 @@ print(prior_diet_matrix)
 In this example, Anchovy is thought to predate Mysids, Gammarids and Copepods; since they eat multiple species, we call this type of species "multiple consumer". Copepods do not eat any species, we call this type of species "source species". Mysids only eat Copepods, consequently their diet is known (no inference is required) and we call this type of species "single consumer". Source species, multiple consumers and single consumers will be automatically detected by the package when preparing the data.  
 
 ###signature_data {#signature_data}
-This data.frame contains signatures measurements for all individuals. Each row corresponds to an indivual. The first column should be named "Species" and identify the species of all individuals. Species should match species from the prior_diet_matrix. The other columns correspond to the different tracers (as many as possible) and their names will be used to identify tracers in prior_delta(#prior_delta) and LOQ(#LOQ). Missing data or censored data should be specified as NA. Tracers should be transformed if required, to ensure that tracer value increase linearly with trophic level in average. The slope of this linear regression (isotopic enrichment for isotopic ratio, contaminant biomagnification for contaminants) is called delta in the rest of the document, consistently with Ballutaud et al. [-@ballutaud_estimating_nodate].  
+This data.frame contains signatures measurements for all individuals. Each row corresponds to an indivual. The first column should be named "Species" and identify the species of all individuals. Species should match species from the prior_diet_matrix. The other columns correspond to the different tracers (as many as possible) and their names will be used to identify tracers in [prior_delta](#prior_delta) and [LOQ](#LOQ). Missing data or censored data should be specified as NA. Tracers should be transformed if required, to ensure that tracer value increase linearly with trophic level in average. The slope of this linear regression (isotopic enrichment for isotopic ratio, contaminant biomagnification for contaminants) is called delta in the rest of the document, consistently with Ballutaud et al. [-@ballutaud_estimating_nodate].  
 
 An example from Munoz et al. [-@munoz_evidence_2017] is provided in the package:
 
@@ -76,7 +78,7 @@ summary(signature_data)
 In this example, 138 individuals were sampled from 16 species. You can check that the names of the species match the row and column names from prior_diet_matrix. Concentrations in 5 contaminants and isotopic ratio in carbon and nitrogen were measured on each indivudal. Some measurements were left censored, i.e. below the limit of quantification: 51 for PFOA, 10 for PFNA and 11 for NA. Concentrations in contaminants were log10 transformed since log concentration of these contaminants is assumed to increase linearly with trophic level.  
 
 ###LOQ {#LOQ}
-This data frame should have the same numbers of row as signature_data(#signature_data) (one per individual), and one column per contaminant. Names of the columns should match the names of the tracers in signature_data(#signature_data). The values correspond for the limit of the quantification / detection (transformed if required, see previous section) for each measurement. If a value is not missing in signature_data(#signature_data), then the corresponding value in LOQ should be smaller (this means that the measurement is above the limit of detection), an error will be thrown otherwise when preparing the data. For NA in signature_data(#signature_data), if a value is provided in LOQ then the model considers that the exact value is not known but is below the LOQ (a so called left censored data). If the value is really a missing data, put a very large value as a LOQ to tell the model that you have no idea at all on the real value.  
+This data frame should have the same numbers of row as [signature_data](#signature_data) (one per individual), and one column per contaminant. Names of the columns should match the names of the tracers in [signature_data](#signature_data). The values correspond for the limit of the quantification / detection (transformed if required, see previous section) for each measurement. If a value is not missing in [signature_data](#signature_data), then the corresponding value in LOQ should be smaller (this means that the measurement is above the limit of detection), an error will be thrown otherwise when preparing the data. For NA in [signature_data](#signature_data), if a value is provided in LOQ then the model considers that the exact value is not known but is below the LOQ (a so called left censored data). If the value is really a missing data, put a very large value as a LOQ to tell the model that you have no idea at all on the real value.  
 
 An example from Munoz et al. [-@munoz_evidence_2017] is provided in the package:  
 
@@ -89,7 +91,7 @@ You can see that column names match column names from signature_data, and that c
 
 ##Optionnal data
 ###prior_delta {#prior_delta}
-If information on the isotopic enrichement or on the contaminant biomagnification pre-exits (i.e. based on independant data sources), they can be used as priors in the analysis. It should be specified as a data.frame with the first column, named tracer, which indicated on which tracer we want to provide information (the values should be consistent with column names from signature_data(#signature_data)), a column mean and a column standard deviation that will parametrize the normal prior use for the correponding delta.
+If information on the isotopic enrichement or on the contaminant biomagnification pre-exits (i.e. based on independant data sources), they can be used as priors in the analysis. It should be specified as a data.frame with the first column, named tracer, which indicated on which tracer we want to provide information (the values should be consistent with column names from [signature_data](#signature_data)), a column mean and a column standard deviation that will parametrize the normal prior use for the correponding delta.
 
 
 ```{r}
@@ -100,7 +102,7 @@ prior_delta
 In this example, based on existing literature, we decided to set two normal priors for nitrogen and carbon isotopic ratios with mean respecively 3 and 0, and standard deviations 1 for both. Since no priors are provided for contaminants, the model will automatically used uninformative priors.
 
 ###prior_signature_data {#prior_signature_data}
-For source species (i.e. species that do not eat any other species, such as Copepods, Gammarids, Nereis and Crabs in the current example), we can also provide prior information on their mean signatures (i.e. information coming from independent data: litterature, former experiments etc.). This is done by providing a data.frame, with a first column names "Species" (species names should once again match species names from diet_matrix), a second column names "tracer" (which should match column names from signature_data(#signature_data)), then a column "mean" (mean value in pre-existing samples), "sd" (standard deviation in prexisting sample), and a last column "n" (number of individual in the pre-existing samples). The form of the corresponding prior is detailed in Ballutaud et al. [-@ballutaud_estimating_nodate]
+For source species (i.e. species that do not eat any other species, such as Copepods, Gammarids, Nereis and Crabs in the current example), we can also provide prior information on their mean signatures (i.e. information coming from independent data: litterature, former experiments etc.). This is done by providing a data.frame, with a first column names "Species" (species names should once again match species names from diet_matrix), a second column names "tracer" (which should match column names from [signature_data](#signature_data)), then a column "mean" (mean value in pre-existing samples), "sd" (standard deviation in prexisting sample), and a last column "n" (number of individual in the pre-existing samples). The form of the corresponding prior is detailed in Ballutaud et al. [-@ballutaud_estimating_nodate]
 
 Here we provide an example coming from David [-@david_dynamique_2006]
 
@@ -111,9 +113,9 @@ prior_signature_data
 
 Here we defined average signatures in carbon and nitrogen isotopic ratios for Copepods and Gammarids, based on 41 indviduals for Copepods (here we had the same values for nitrogen and carbon, but this is not compulsory) and 7 for Gammarids. For other tracers and source species, a non informative priors will be used.
 
-#Running the data
+#Running the model and exploring results
 ##Running the model
-Once all data are available and formatted as detailed, the first step is to convert them into a format that can be understood by JAGS and that facilitate model fitting. This is done by using the function prepare_data, that returns a list containing data ready to be used by JAGS. The function also make some check (species and tracers names are consistent among column, absence of loops in the prior_diet_matrix(#prior_diet_matrix)) and returns informative error message if an error is detected.
+Once all data are available and formatted as detailed, the first step is to convert them into a format that can be understood by JAGS and that facilitate model fitting. This is done by using the function prepare_data, that returns a list containing data ready to be used by JAGS. The function also make some check (species and tracers names are consistent among column, absence of loops in the [prior_diet_matrix](#prior_diet_matrix)) and returns informative error message if an error is detected.
 
 Here is the code to prepare the data:
 
@@ -134,8 +136,26 @@ Once data is ready and the model built, the model can be fitted using the functi
 myresults <- fit_escroc(mydata, mymodel,burnin=1000,adapt=500,sample=1000)
 ```
 
-This function fits the model. Here we run the Markov Chain for 500 iteration as an adaptive phase, then 1000 iterations as burnin to ensure the chains converged. We put a too small number of iterations to have a fast running example (that's why a warning is thrown about the adaptive phase), and the number of iterations should be increased in a real case study to achieve a correct adaptation phase (adapt argument) and ensure chains convergence (burnin argument) before sampling.
-The function returns an mcmc.list with varnames formatted to be self-explanatory. The result of a gelman test is also displayed, and values should be smaller than 1.05 if the chains have indeed converged. You can see that the chains have not converged because of our very small burnin numbers. You can also see that we got a NaN for the diet of Mysids: this is because Mysids is a single consumer and consequently, their diet is not estimated (but directly known).
+This function fits the model. Here we run the Markov Chain for 500 iteration as an adaptive phase, then 1000 iterations as burnin to ensure the chains converged. We put a too small number of iterations to have a fast running example (that's why a warning is thrown about the adaptive phase), and the number of iterations should be increased in a real case study to achieve a correct adaptation phase (adapt argument) and ensure chains convergence (burnin argument) before sampling.  
+The function returns an mcmc.list with varnames formatted to be self-explanatory. The result of a gelman test is also displayed, and values should be smaller than 1.05 if the chains have indeed converged. You can see that the chains have not converged because of our very small burnin numbers. You can also see that we got a NaN for the diet of Mysids: this is because Mysids is a single consumer and consequently, their diet is not estimated (but directly known).  
+To provide a more appropriate results, we included in the package a sample of results that was obtained with the following line of code:  
+
+```{r eval=FALSE}
+myresults <- fit_escroc(mydata, mymodel,burnin=1e6,adapt=10000,sample=50000,thin=10)
+```
+
+It can be retrieved that way:
+```{r}
+data(myresults)
+
+library(coda)
+#running a gelman diagnostic
+gelman.diag(myresults,multivariate=FALSE)
+```
+
+You can see that most gelman tests were well below 1.05 so that the chains have indeed converged.
+
+
 Since the returned object is a mcmc.list, usual function from package coda can be used to explore the results, however we provide some functions to draw usual diagrams and extracts standard statistics.
 
 #Data exploration
@@ -143,11 +163,11 @@ Since the returned object is a mcmc.list, usual function from package coda can b
 ###Diet species by species
 A summary of the posterior distribution of a species, or a set of species is provided by the functions plot_diet_species and export_diet_species. For example, here we plot a diagram displaying the posterior diet composition of the Sole
 
-```{r}
+```{r fig.width=12, fig.heigth=12}
 print(plot_diet_species(myresults,mydata,"Sole"))
 ```
 
-You should remind that our model has not converged in the current example so this is purely an illustration of the type of results. Results can also be displayed as a table of the quantiles of the posterior distribution:
+Here you see that Sole diet is dominated by Gammarids, and to a lesser extent by Brown shrimp. Results can also be displayed as a table of the quantiles of the posterior distribution:
 
 ```{r}
 #we extract the posterior samples of the Sole diet
@@ -162,11 +182,11 @@ apply(sole_posterior,2,quantile,probs=c(0.025,.5,.975))
 ###Diet of all species
 A plot is proposed to the summarize the whole posterior diet matrix:
 
-```{r}
+```{r fig.width=12, fig.heigth=12}
 plot_full_diet_matrix(myresults,mydata)
 ```
 
-In this matrix, predators are displayed in rows and preys is column. The color of the symbol stands for the median of posterior distribution of the contribution of a prey in the diet of a predator. For example, the blue color of the circle indicate that the median contribution of Mysids in Goby diet is about 0.6. The radius of the large circle stands for the 97.5%: for example the largest circle in the Anchovy x Copepods fills the whole cell, this means that the 97.5% quantile of the contribution of Copepods in Anchovy diet is close to 1. The radius ot the white circle inside the the coloured circle indicate the 2.5% quantile. Looking at Sprat x Copepods: the white circle is very small so the quantile 2.5% is close to 0, the colour is an intermediate blue so the quantile is close to 0.5 and the largest circle is very big so the quantile 97.5%: this indicates that the posterior distribution is very large, so that we have not learn anything on the contribution fo Copepods in Sprat diet (this is because the model had not converged).
+In this matrix, predators are displayed in rows and preys is column. The color of the symbol stands for the median of posterior distribution of the contribution of a prey in the diet of a predator. For example, the blue color of the circle indicate that the median contribution of Mysids in Goby diet is about 0.6. The radius of the large circle stands for the 97.5%: for example the largest circle in the Anchovy x Copepods fills the whole cell, this means that the 97.5% quantile of the contribution of Copepods in Anchovy diet is close to 1. The radius ot the white circle inside the the coloured circle indicate the 2.5% quantile. Looking at Sprat x Copepods: the white circle is small so the quantile 2.5% is close to 30%, the colour is an rather dark blue so the quantile is about 0.7 and the largest circle is very big so the quantile 97.5%: this indicates that the posterior distribution is quite very large.
 
 
 ##Plotting delta
