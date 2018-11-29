@@ -1,23 +1,21 @@
 ---
 title: "Tutorial EscrocR"
 author: 
-- name: Hilaire Drouineau
-  affiliation:
-  - Irstea Bordeaux - UR EABX
-- name: Jérémy Lobry
-  affiliation:
-  - Irstea Bordeaux - UR EABX
-- name: Marine Ballutaud
+- "Hilaire Drouineau - Irstea Bordeaux, UR EABX"
+- "Jérémy Lobry - Irstea Bordeaux, UR EABX"
+- "Marine Ballutaud"
 date: "`r Sys.Date()`"
 package: escrocR
 output:
-  rmarkdown::html_vignette: default
-  pdf_document: default
+  pdf_document:
+    toc: yes
+  rmarkdown::html_vignette:
+     keep_md: yes
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{Tutorial EscrocR}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 
