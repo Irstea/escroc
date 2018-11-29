@@ -4,7 +4,7 @@
 \alias{prepare_data}
 \title{preparation of the data}
 \usage{
-prepare_data(prior_diet_matrix, signature_data, isLeftCensored, LOQ,
+prepare_data(prior_diet_matrix, signature_data, LOQ,
   prior_signature_data = NULL, prior_delta = NULL)
 }
 \arguments{
@@ -12,9 +12,7 @@ prepare_data(prior_diet_matrix, signature_data, isLeftCensored, LOQ,
 
 \item{signature_data}{a data frame. First column should be names species and followning columns should correspond to tracers. Data should be transformed first if required. Left censored data and missing data should be denoted NA}
 
-\item{isLeftCensored}{a data frame with the same number of rows as signature_data and one column per tracer. For each measure from the signature_data, tells if the observation is left censored (0) or not (1). Put NA for missing data}
-
-\item{LOQ}{same structure as isLeftCensored. Gives the limit of detection of limit of quantification of the corresponding measure}
+\item{LOQ}{a data frame with the same number of rows as signature_data and one column per tracer. Gives the limit of detection of limit of quantification of the corresponding measure}
 
 \item{prior_signature_data}{a data frame that contains data that can be used to build a prior signature for source species. First column should be names Species and second one tracer. Species and tracers should be consistent with signature_data. Then, the three following columns correpond to the mean signature, the standard deviation and the number of samples.}
 
@@ -35,5 +33,5 @@ prior_delta <- data.frame(tracer=c("X15N","X13C"),mean=c(3,0),sd=c(1,1))
 
 #check that everything is ok
 mydata <- prepare_data(prior_diet_matrix,signature_data,
-isLeftCensored,LOQ,prior_signature_data,prior_delta)
+LOQ,prior_signature_data,prior_delta)
 }
