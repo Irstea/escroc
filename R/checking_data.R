@@ -83,6 +83,10 @@ checking_data <-
         stop("incorrect column names in prior_signature_data")
     }
 
+    #check that LOQ are smaller than available signature_data
+    if (sum(LOQ>signature_data[,-1],na.rm=TRUE)>1)
+      stop("some LOQ are greater then corresponding signature")
+
     #check that tracers names match in LOQ, is Above, signature and prior
     if (!all(dim(isLeftCensored) == dim(LOQ)))
       stop ("LOQ and isLeftCensored should have similar dimensions")
