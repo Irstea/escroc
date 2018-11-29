@@ -118,7 +118,7 @@ Once all data are available and formatted as detailed, the first step is to conv
 Here is the code to prepare the data:
 
 ```{r}
-mydata <- prepare_data(prior_diet_matrix,signature_data,isLeftCensored,LOQ,prior_signature_data,prior_delta)
+mydata <- prepare_data(prior_diet_matrix,signature_data,LOQ,prior_signature_data,prior_delta)
 ```
 
 Note that the two last arguments are optionnal and should be provided only if prior information exists. mydata is a list that contains all the information on the observation and on the structure of the trophic network and which can then be used to build the model by itself, using the function building_model:

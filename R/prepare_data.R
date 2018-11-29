@@ -42,7 +42,6 @@ prepare_data <-
     #sort the signature_data columns
     signature_data <- signature_data[, c("Species", tracer_name)]
     LOQ <- LOQ[, tracer_name]
-    isLeftCensored <- isLeftCensored[, tracer_name]
 
     #retrieve the species list
     species_name <- sort(rownames(prior_diet_matrix))
@@ -129,7 +128,7 @@ prepare_data <-
 
 
     #creation of an indicator matrix telling if the data is left censored
-    isLeftCensored <- (!(is.na(signature_data[,-1]) & LOQ)) *1
+    isLeftCensored <- (!(is.na(signature_data) & LOQ)) *1
 
     return(
       list(
