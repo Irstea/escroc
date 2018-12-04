@@ -1,9 +1,9 @@
 ---
-title: "Tutorial EscrocR"
+title: "EscrocR: a R package implementing the model ESCROC"
 author: 
 - "Hilaire Drouineau - Irstea Bordeaux, UR EABX"
-- "Jérémy Lobry - Irstea Bordeaux, UR EABX"
 - "Marine Ballutaud"
+- "Jérémy Lobry - Irstea Bordeaux, UR EABX"
 date: "`r Sys.Date()`"
 package: escrocR
 output:

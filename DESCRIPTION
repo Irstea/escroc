@@ -1,9 +1,9 @@
 Package: escrocR
-Title: applying the Escroc model
+Title: EscrocR: a R package implementing the model ESCROC
 Version: 0.0.0.9000
 Authors@R: c(person("Hilaire","Drouineau",email="hilaire.drouineau@irstea.fr",role=c("aut","cre")),
-    person("Jeremy","Lobry",email="jeremy.lobry@irstea.fr",role=c("aut")),
-    person("Marine","Ballutaud",role=c("aut")))
+    person("Marine","Ballutaud",role=c("aut")),
+    person("Jeremy","Lobry",email="jeremy.lobry@irstea.fr",role=c("aut")))
 Description: Escroc is a model that aims at estimating contaminant biomagnification, isotopic enrichments and diet in trophic networks.
 Depends: R (>= 3.5.0)
 License: BSD_3_clause + file LICENSE
