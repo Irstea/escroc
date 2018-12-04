@@ -84,7 +84,8 @@
 
 #' Example of results
 #'
-#' An example of results send by \code{\link{fit_escroc}} with burnin=1e6, adapt=10000,sample=50000 and thin=10
+#' An example of results send by \code{\link{fit_escroc}} with burnin=1e6, adapt=10000,sample=50000 and thin=150. The thinning
+#' rate was chosen to limit the size of the package.
 #'
 #' @format a mcmc.list
 "myresults"

@@ -76,7 +76,7 @@ summary(signature_data)
 In this example, 138 individuals were sampled from 16 species. You can check that the names of the species match the row and column names from prior_diet_matrix. Concentrations in 5 contaminants and isotopic ratio in carbon and nitrogen were measured on each indivudal. Some measurements were left censored, i.e. below the limit of quantification: 51 for PFOA, 10 for PFNA and 11 for NA. Concentrations in contaminants were log10 transformed since log concentration of these contaminants is assumed to increase linearly with trophic level.  
 
 ###LOQ {#LOQ}
-This data frame should have the same numbers of row as [signature_data](#signature_data) (one per individual), and one column per contaminant. Names of the columns should match the names of the tracers in [signature_data](#signature_data). The values correspond for the limit of the quantification / detection (transformed if required, see previous section) for each measurement. If a value is not missing in [signature_data](#signature_data), then the corresponding value in LOQ should be smaller (this means that the measurement is above the limit of detection), an error will be thrown otherwise when preparing the data. For NA in [signature_data](#signature_data), if a value is provided in LOQ then the model considers that the exact value is not known but is below the LOQ (a so called left censored data). If the value is really a missing data, put a very large value as a LOQ to tell the model that you have no idea at all on the real value.  
+This data frame should have the same numbers of row as [signature_data](#signature_data) (one per individual), and one column per contaminant. Names of the columns should match the names of the tracers in [signature_data](#signature_data). The values correspond for the limit of the quantification / detection (transformed if required, see previous section) for each measurement. If a value is not missing in [signature_data](#signature_data), then the corresponding value in LOQ should be smaller (this means that the measurement is above the limit of detection), an error will be thrown otherwise when preparing the data. For NA in [signature_data](#signature_data), if a value is provided in LOQ then the model considers that the exact value is not known but is below the LOQ (a so called left censored data). If the value from [signature_data](#signature_data) is indeed a missing data, put a very large value as a LOQ to tell the model that you have no idea at all on the real value.  
 
 An example from Munoz et al. [-@munoz_evidence_2017] is provided in the package:  
 
@@ -139,8 +139,10 @@ The function returns an mcmc.list with varnames formatted to be self-explanatory
 To provide a more appropriate results, we included in the package a sample of results that was obtained with the following line of code:  
 
 ```{r eval=FALSE}
-myresults <- fit_escroc(mydata, mymodel,burnin=1e6,adapt=10000,sample=50000,thin=10)
+myresults <- fit_escroc(mydata, mymodel,burnin=1e6,adapt=10000,sample=50000,thin=150)
 ```
+  
+The large thinning rate was chosen to limit the size of the package.  
 
 It can be retrieved that way:
 ```{r}

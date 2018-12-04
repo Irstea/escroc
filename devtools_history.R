@@ -63,7 +63,7 @@ mydata <- prepare_data(prior_diet_matrix,signature_data,
 mymodel <- building_model(mydata)
 #fit the model
 myresults <- fit_escroc(mydata, mymodel,burnin=1e6,adapt=10000,sample=50000)
-myresults <- window(myresults,thin=10)
+myresults <- window(myresults,thin=150)
 usethis::use_data(myresults,myresults,overwrite=TRUE)
 
 
