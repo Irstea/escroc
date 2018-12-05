@@ -9,11 +9,13 @@ The easiest solution is to use the 'devtools' packages, this will installed the 
 * on Mac: [Xcode command line tools](#https://developer.apple.com/downloads)
 * on Linux: the R development package, usually called r-devel or r-base-dev
   
+To generate the vignette, you also need to have pandoc and pandoc-citeproc installed. Instructions can be found [here](#https://pandoc.org/installing.html).    
+  
 Then, on a R console:
 
     > install.packages("devtools")
     > library(devtools)
-    > install_github("irstea/escroc")
+    > install_github("irstea/escroc",build=TRUE,build_opts = c("--no-resave-data", "--no-manual"))
 
 # Usage #
 A vignette is included in the package to explain the usage.  
