@@ -20,3 +20,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/Irstea/escroc
+BugReports: https://github.com/Irstea/escroc/issues
