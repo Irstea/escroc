@@ -5,11 +5,11 @@ License: BSD3
 
 # Installation #
 The easiest solution is to use the 'devtools' packages, this will installed the package and all required dependencies. To use 'devtools' , you need to install first:
-* on Windows: [Rtools](#http://cran.r-project.org/bin/windows/Rtools/) first.
-* on Mac: [Xcode command line tools](#https://developer.apple.com/downloads)
-* on Linux: the R development package, usually called r-devel or r-base-dev
+* on Windows: [Rtools](http://cran.r-project.org/bin/windows/Rtools/)  
+* on Mac: [Xcode command line tools](https://developer.apple.com/downloads)  
+* on Linux: the R development package, usually called r-devel or r-base-dev  
   
-To generate the vignette, you also need to have pandoc and pandoc-citeproc installed. Instructions can be found [here](#https://pandoc.org/installing.html).    
+To generate the vignette, you also need to have pandoc and pandoc-citeproc installed. Instructions can be found [here](https://pandoc.org/installing.html).    
   
 Then, on a R console:
 
@@ -21,4 +21,4 @@ Then, on a R console:
 A vignette is included in the package to explain the usage.  
 
 # Bug Reporting #
-Please, report bug on the [github site](#https://github.com/Irstea/escroc/issues).
+Please, report bug on the [github site](https://github.com/Irstea/escroc/issues).
