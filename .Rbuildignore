@@ -1,3 +1,5 @@
+^Meta$
+^doc$
 ^devtools_history\.R$
 ^.*\.Rproj$
 ^\.Rproj\.user$

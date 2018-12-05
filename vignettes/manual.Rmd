@@ -7,10 +7,10 @@ author:
 date: "`r Sys.Date()`"
 package: escrocR
 output:
-  pdf_document:
-    toc: yes
   rmarkdown::html_vignette:
      keep_md: yes
+  pdf_document:
+    toc: yes
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{Tutorial EscrocR}
