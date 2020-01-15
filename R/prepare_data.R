@@ -37,12 +37,12 @@
 #' trophic efficiency (density x^(a-1)*(1-x)^(b-1)/Beta(a,b))
 #' @param catch rate a table that stores for each species and PP
 #' (1st column), a (second column) with landings and a third with discards#'
-#' @param input_detritus a table with only one row (for Detritus), first column
-#' necessarily "Detritus", then colum 2 is either "unif" or "norm" depending
-#' on the choice. Then the then the two last columns set the parameter
-#' of the prior (mean and sd for normal, min and max for unif).#'
+#'  @param input_detritus a table with only one row (for Detritus), first column
+#'  necessarily "Detritus". Next column indicates mean and sd
 #' @return a named list that contains formatted object that will be used by
 #' jags to fit the model
+#'
+#' @importFrom fitdistrplus fitdist
 #' @examples
 #' #importing data
 #' data(prior_diet_matrix)
@@ -238,7 +238,19 @@ prepare_data <-
     catch <- catch[match(c(species_name, "PP"),
                          catch[, 1]), ]
 
-    idtype <- as.character(input_detritus[, 2])
+
+    Aprior<-t(sapply(seq_len(nb_species),function(s){
+      uqp <- runif(1000, uq[s, 2], uq[s, 3])
+      product <- runif(1000, productivity[s, 2], productivity[s, 3])
+      cr <- runif(1000, consumption_rate[s, 2], consumption_rate[s, 3])
+      A <- product/(cr*(1-uqp))
+      A[A > 1] <- NA
+      A[A <= 0] <- NA
+      if (length(which(is.na(A))) > 0)
+        A <- A[-which(is.na(A))]
+      fitdist(A,"beta")$estimate
+    }))
+
     return(
       list(
         signature_data = signature_data,
@@ -291,11 +303,9 @@ prepare_data <-
         discards=catch[,3],
         uq_min=uq[, 2],
         uq_max=uq[, 3],
-        idtype=idtype,
-        idp1=input_detritus[, 3],
-        idp2=ifelse(idtype == "norm",
-                    1/sqrt(input_detritus[, 4]),
-                    input_detritus[, 4])
+        input_Det_obs=input_detritus[1, 2],
+        tau_idp=1/input_detritus[1, 3]^2,
+        Aprior=Aprior
 
       )
     )

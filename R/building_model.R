@@ -76,6 +76,7 @@ for (i in 1:nb_prior_signature){
 for (i in id_consumer_single){
   diet_short[id_consumer_single,1]<-1
 }
+
 for (i in id_consumer_multiple){
   diet_short[i,1:nb_prey_per_species[i]]~ddirich(alpha_diet[i,1:nb_prey_per_species[i]])
 }
@@ -140,10 +141,12 @@ priors_ecopath_model <- "
 ###priors on ecopath parameters
 for (spe in 1:nb_species){
 	trophic_efficiency[spe]~dbeta(prior_alpha[spe],prior_beta[spe])
-	productivity[spe]~dunif(min_prod[spe],min(max_prod[spe],consumption_rate[spe]*
-      (.99999999-uq[spe])))
+	#productivity[spe]~dunif(min_prod[spe],min(max_prod[spe],consumption_rate[spe]*
+      #(.99999999-uq[spe])))
+  A[spe]~dbeta(Aprior[spe,1],Aprior[spe,2])
 	consumption_rate[spe]~dunif(min_cons_rate[spe],max_cons_rate[spe])
 	uq[spe]~dunif(uq_min[spe],uq_max[spe])
+  productivity[spe]<-A[spe]*consumption_rate[spe]*(1-uq[spe])
 }
 
 #priors for PP
@@ -187,8 +190,8 @@ equilibrium <- paste("
 #For Detritus, we compute accumulation that should look like observation (input
 #or output)
   input_Det<-consumed[id_Det]-sum(not_assimilated+other_mortality+discards)
-  input_Det_obs~",ifelse(mydata$idtype=="unif","dunif(","dnorm("),
-                     mydata$idp1,",",mydata$idp2,")",sep="")
+  input_Det_obs~dnorm(input_Det,tau_idp)
+")
 
 
 

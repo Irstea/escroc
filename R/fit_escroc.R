@@ -47,8 +47,7 @@ fit_escroc <- function(mydata,mymodel,burnin=1000,sample=1000,adapt=1000,method=
                             "biomass", "trophic_efficiency",
                             "uq", "consumption_rate",
                             "productivity", "input_Det"),
-                data = mydata[-which(names(mydata) %in% c(
-                  "idtype", "idp1", "idp2", "btype", "bp1", "bp2"))],
+                data = mydata,
                 n.chains = 3,
                 adapt = adapt,
                 burnin = burnin,

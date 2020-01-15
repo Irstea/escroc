@@ -41,9 +41,7 @@
 #'  @param catch rate a table that stores for each species and PP
 #' (1st column), a (second column) with landings and a third with discards
 #'  @param input_detritus a table with only one row (for Detritus), first column
-#'  necessarily "Detritus", then colum 2 is either "unif" or "norm" depending
-#'  on the choice. Then the then the two last columns set the parameter
-#'  of the prior (mean and sd for normal, min and max for unif).
+#'  necessarily "Detritus". Next column indicates mean and sd
 #'
 #' @return The function does not return any results but raises an error if a
 #' missformat is detected
@@ -222,10 +220,12 @@ checking_data <-
     if (class(trophic_efficiency[, 2]) != "numeric" ||
         class(trophic_efficiency[, 3]) != "numeric")
       stop("in table trophic_efficiency, 2nd and 3rd columns should be numeric")
+
+    #check the format of detritus
     if (input_detritus[, 1] != "Detritus")
       stop("in table input_detritus, first column should be Detritus")
-    if (!all(input_detritus[, 2] %in% c("unif", "norm")))
-      stop("in table input_detritus, second column is either unif or norm")
-
+    if (class(input_detritus[, 2]) != "numeric" ||
+        class(input_detritus[, 3]) != "numeric")
+      stop("in table input_detritus, 2nd and 3rd columns should be numeric")
 
     }
