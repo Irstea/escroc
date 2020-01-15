@@ -15,7 +15,7 @@ reformat_results <- function(myfit, mydata) {
   kept_diet <- which(!is.na(mydata$prey_id), arr.ind = TRUE)
   names_keep <-
     mapply(function(i, j)
-      paste("diet[", i, ",", j, "]", sep = ""),
+      paste("diet_short[", i, ",", j, "]", sep = ""),
       kept_diet[, 1],
       kept_diet[, 2])
   names_variables <- varnames(res)
@@ -39,18 +39,27 @@ reformat_results <- function(myfit, mydata) {
       strsplit(substr(old_name, 1, nchar(old_name) - 1), c("[\\[,]"))[[1]]
     if (startsWith(old_name, "random") ||
         startsWith(old_name,"mean_signature")) {
-      (paste(pieces[1], "[", species_name[as.integer(pieces[2])], ",", tracer_name[as.integer(pieces[3])], "]", sep =
-                     ""))
+      (paste(pieces[1],
+             "[",
+             species_name[as.integer(pieces[2])],
+             ",",
+             tracer_name[as.integer(pieces[3])], "]"
+             , sep =""))
     } else if (startsWith(old_name, "delta")) {
       (paste(pieces[1], "[", tracer_name[as.integer(pieces[2])], "]", sep =
                      ""))
     } else {
       idspec = as.integer(pieces[2])
-      (paste(pieces[1], "[", species_name[idspec], ",", species_name[mydata$prey_id[idspec, as.integer(pieces[3])]], "]", sep =
-                     ""))
+      (paste(pieces[1],
+             "[",
+             species_name[idspec],
+             ",",
+             species_name[mydata$prey_id[idspec, as.integer(pieces[3])]], "]",
+             sep = ""))
     }
   })
   coda::varnames(res) <- new_names
+  coda::varnames(res) <- gsub("diet_short", "diet", coda::varnames(res))
   return(res)
 }
 
