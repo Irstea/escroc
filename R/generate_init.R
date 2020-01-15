@@ -14,21 +14,21 @@ generate_init <- function(mydata) {
     delta <- delta_std <- rep(NA,mydata$nb_tracer)
     delta[mydata$id_prior_delta] <- mapply(function(mu,sd) rnorm(1,mu,sd),mydata$mu_prior_delta,mydata$sd_prior_delta)
     delta_std [!((1:mydata$nb_tracer) %in% mydata$id_prior_delta)] <- runif(mydata$nb_tracer-mydata$nb_prior_delta,.1,1)
-    diet <- matrix(NA, mydata$nb_species, mydata$nb_species)
-    for (i in 1:mydata$nb_species) {
+    diet_short <- matrix(NA, mydata$nb_species, max(mydata$nb_prey_per_species))
+    for (i in 1:(mydata$nb_species+2)) {
       if (mydata$nb_prey_per_species[i] > 1) {
         alpha <- runif(mydata$nb_prey_per_species[i])
-        diet[i, 1:mydata$nb_prey_per_species[i]] <-
+        diet_short[i, 1:mydata$nb_prey_per_species[i]] <-
           alpha / sum(alpha)
       }
     }
     mean_signature_std <-
       matrix(NA, mydata$nb_species, mydata$nb_tracer)
     mean_signature_std[mydata$id_source_species,] <-
-      runif(mydata$nb_source_species * mydata$nb_tracer,-3, 1)
+      runif(length(mydata$id_source_species) * mydata$nb_tracer,-3, 1)
     random_effect <-
       matrix(
-        runif(mydata$nb_prey_per_species * mydata$nb_tracer),
+        runif(mydata$nb_species * mydata$nb_tracer),
         mydata$nb_species,
         mydata$nb_tracer
       )
@@ -47,7 +47,7 @@ generate_init <- function(mydata) {
       mean_signature_std = mean_signature_std,
       random_effect = random_effect,
       signature_data = signature_data,
-      diet = diet,
+      diet_short = diet_short,
       delta = delta,
       delta_std =delta_std,
       .RNG.seed = chain,
