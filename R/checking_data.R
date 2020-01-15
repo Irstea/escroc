@@ -39,7 +39,7 @@
 #'  (1st column), a (second column) and b (3rd column) of the beta prior on
 #'  trophic efficiency (density x^(a-1)*(1-x)^(b-1)/Beta(a,b))
 #'  @param catch rate a table that stores for each species and PP
-#' (1st column), a (second column) with catches
+#' (1st column), a (second column) with landings and a third with discards
 #'  @param input_detritus a table with only one row (for Detritus), first column
 #'  necessarily "Detritus", then colum 2 is either "unif" or "norm" depending
 #'  on the choice. Then the then the two last columns set the parameter
@@ -199,8 +199,9 @@ checking_data <-
       stop("the productivity table should include 1 row per species + PP")
     if (!all(sort(catch[, 1]) == sort(c("PP", list_species_diet))))
       stop("in table productivity, first column should include all species+PP")
-    if (class(catch[, 2]) != "numeric")
-      stop("in table catch, 2nd column should be numeric")
+    if (class(catch[, 2]) != "numeric"  ||
+        class(catch[, 3]) != "numeric")
+      stop("in table catch, 2nd and 3rd columns should be numeric")
 
     #check consumption_rate
     if (nrow(consumption_rate) != (length(list_species_diet)))

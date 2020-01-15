@@ -174,7 +174,7 @@ for (i in id_top_predator){
 cons<-"
 ###consumption for other species (not top predators)
 for (spe in c(id_PP, id_not_top_predator)){
-  biomass[spe]<-1/(trophic_efficiency[spe]*productivity[spe])*(catches[spe]+inprod(diet[pred_id[spe,1:nb_pred_per_species[spe]],spe]*consumption_rate[pred_id[spe,1:nb_pred_per_species[spe]]],biomass[pred_id[spe,1:nb_pred_per_species[spe]]]))
+  biomass[spe]<-1/(trophic_efficiency[spe]*productivity[spe])*(discards[spe]+landings[spe]+inprod(diet[pred_id[spe,1:nb_pred_per_species[spe]],spe]*consumption_rate[pred_id[spe,1:nb_pred_per_species[spe]]],biomass[pred_id[spe,1:nb_pred_per_species[spe]]]))
   consumed[spe]<-inprod(diet[pred_id[spe,1:nb_pred_per_species[spe]],spe]*consumption_rate[pred_id[spe,1:nb_pred_per_species[spe]]],biomass[pred_id[spe,1:nb_pred_per_species[spe]]])
 }
 consumed[id_Det]<-inprod(diet[pred_id[id_Det,1:nb_pred_per_species[id_Det]],id_Det]*consumption_rate[pred_id[id_Det,1:nb_pred_per_species[id_Det]]],biomass[pred_id[id_Det,1:nb_pred_per_species[id_Det]]])
@@ -186,7 +186,7 @@ consumed[id_Det]<-inprod(diet[pred_id[id_Det,1:nb_pred_per_species[id_Det]],id_D
 equilibrium <- paste("
 #For Detritus, we compute accumulation that should look like observation (input
 #or output)
-  input_Det<-consumed[id_Det]-sum(not_assimilated+other_mortality)
+  input_Det<-consumed[id_Det]-sum(not_assimilated+other_mortality+discards)
   input_Det_obs~",ifelse(mydata$idtype=="unif","dunif(","dnorm("),
                      mydata$idp1,",",mydata$idp2,")",sep="")
 

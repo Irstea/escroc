@@ -36,7 +36,7 @@
 #' (1st column), a (second column) and b (3rd column) of the beta prior on
 #' trophic efficiency (density x^(a-1)*(1-x)^(b-1)/Beta(a,b))
 #' @param catch rate a table that stores for each species and PP
-#' (1st column), a (second column) with catches
+#' (1st column), a (second column) with landings and a third with discards#'
 #' @param input_detritus a table with only one row (for Detritus), first column
 #' necessarily "Detritus", then colum 2 is either "unif" or "norm" depending
 #' on the choice. Then the then the two last columns set the parameter
@@ -280,7 +280,8 @@ prepare_data <-
         max_prod=productivity[, 3],
         min_cons_rate=consumption_rate[, 2],
         max_cons_rate=consumption_rate[, 3],
-        catches=catch[,2],
+        landings=catch[,2],
+        discards=catch[,3],
         uq_min=uq[, 2],
         uq_max=uq[, 3],
         idtype=idtype,
