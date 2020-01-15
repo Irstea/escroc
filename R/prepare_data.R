@@ -126,7 +126,7 @@ prepare_data <-
     #numerical instability in jags
     for (i in seq_len(nb_species)) {
       if (sum(alpha_diet[i,]==1,na.rm=TRUE)==nb_prey_per_species[i])
-        alpha_diet[i, 1:nb_prey_per_species[i]] <-1.0001
+        alpha_diet[i, 1:nb_prey_per_species[i]] <- .9
     }
 
     #pred_id is a matrix with prey in row and its predator in column
