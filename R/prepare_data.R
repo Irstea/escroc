@@ -122,6 +122,13 @@ prepare_data <-
     }
     rownames(alpha_diet) <- rownames(prey_id) <- rownames(prior_diet_matrix)
 
+    #we avoid that all alpha_diet per line equals 1 since it can raise to
+    #numerical instability in jags
+    for (i in seq_len(nb_species)) {
+      if (sum(alpha_diet[i,]==1,na.rm=TRUE)==nb_prey_per_species[i])
+        alpha_diet[i, 1:nb_prey_per_species[i]] <-1.0001
+    }
+
     #pred_id is a matrix with prey in row and its predator in column
     nb_pred_per_species <- colSums(prior_diet_matrix > 0)
     pred_id <- matrix(NA, ncol(prior_diet_matrix),
