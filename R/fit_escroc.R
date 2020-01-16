@@ -43,7 +43,7 @@
 fit_escroc <- function(mydata,mymodel,burnin=1000,sample=1000,adapt=1000,method="parallel",...){
   myinits <- generate_init(mydata)
   res<-run.jags(model=mymodel,
-                monitor = c("random_effect", "delta","mean_signature","diet",
+                monitor = c("random_effect", "delta","mean_signature","diet_short",
                             "biomass", "trophic_efficiency",
                             "uq", "consumption_rate",
                             "productivity", "input_Det"),
