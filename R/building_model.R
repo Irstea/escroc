@@ -21,6 +21,7 @@
 #' mymodel <- building_model(mydata)
 #' @export
 building_model <- function(mydata) {
+  nb_species <- mydata$nb_species
   priors_noise_regression <-"
 #precision of the regression of enrichment (uninformative prior)
 for (i in 1:nb_tracer){
@@ -129,18 +130,26 @@ for (spe in 1:nb_species){
 	production[spe]<-productivity[spe]*biomass[spe]
 	not_assimilated[spe]<-consumption[spe]*uq[spe]
 	respiration[spe]<-consumption[spe]-production[spe]-not_assimilated[spe]
-	other_mortality[spe]<-productivity[spe]*biomass[spe]*(1-trophic_efficiency[spe])
 }
+
+for (spe in id_not_top_predator){
+	other_mortality[spe]<-production[spe]*(1-trophic_efficiency[spe])
+}
+for (spe in id_top_predator){
+	other_mortality[spe]<-production[spe]-landings[spe]-discards[spe]
+  trophic_efficiency[spe]<-1-other_mortality[spe]/production[spe]
+}
+
+
 production[id_PP]<-productivity[id_PP]*biomass[id_PP]
 other_mortality[id_PP]<-productivity[id_PP]*biomass[id_PP]*(1-trophic_efficiency[id_PP])
 not_assimilated[id_PP]<-0
 "
 
 ###should we put a EE to PP and detN?
-priors_ecopath_model <- "
+priors_ecopath_model <-paste("
 ###priors on ecopath parameters
 for (spe in 1:nb_species){
-	trophic_efficiency[spe]~dbeta(prior_alpha[spe],prior_beta[spe])
 	#productivity[spe]~dunif(min_prod[spe],min(max_prod[spe],consumption_rate[spe]*
       #(.99999999-uq[spe])))
   A[spe]~dbeta(Aprior[spe,1],Aprior[spe,2])
@@ -152,12 +161,20 @@ for (spe in 1:nb_species){
 #priors for PP
 trophic_efficiency[id_PP]~dbeta(prior_alpha[id_PP],prior_beta[id_PP])
 productivity[id_PP] ~ dunif(min_prod[id_PP],max_prod[id_PP])
-"
+
+",
+paste("trophic_efficiency[",mydata$id_not_top_predator,"]",
+      ifelse(mydata$prior_alpha[mydata$id_not_top_predator] == 0,
+             "<-0",
+             paste("~dbeta(prior_alpha[",mydata$id_not_top_predator,
+                   "],prior_beta[",mydata$id_not_top_predator,"])",sep="")),
+             collapse="\n"),sep="")
+
 
 priors_top_pred <- "
 #priors for biomass of top predator
 for (i in id_top_predator){
-  biomass[i] ~ dunif(bmin,bmax)
+  biomass[i] ~ dunif((landings[i]+discards[i])/productivity[i],bmax)
 }
 "
 #observations of biomass

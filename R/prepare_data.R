@@ -251,6 +251,11 @@ prepare_data <-
       fitdist(A,"beta")$estimate
     }))
 
+    bmax <- max(mapply(function(a, b) qnorm(.999,a,b),
+                       biomass[, 2],
+                       biomass[, 3]))
+
+
     return(
       list(
         signature_data = signature_data,
@@ -289,8 +294,7 @@ prepare_data <-
         id_no_prior_delta = id_no_prior_delta,
         nb_prior_delta = nb_prior_delta,
         alpha_diet = alpha_diet,
-        bmin=1e-10, ##minimum biomass for top predators
-        bmax=1e100,
+        bmax=bmax,
         obs_biomass=biomass[, 2],
         sigma_biomass=biomass[,3],
         prior_alpha=trophic_efficiency[, 2],

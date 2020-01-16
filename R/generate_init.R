@@ -10,12 +10,13 @@
 #' @importFrom stats rnorm
 #' @export
 generate_init <- function(mydata) {
+  nb_species <- mydata$nb_species
   lapply(1:3, function(chain) {
     delta <- delta_std <- rep(NA,mydata$nb_tracer)
     delta[mydata$id_prior_delta] <- mapply(function(mu,sd) rnorm(1,mu,sd),mydata$mu_prior_delta,mydata$sd_prior_delta)
     delta_std [!((1:mydata$nb_tracer) %in% mydata$id_prior_delta)] <- runif(mydata$nb_tracer-mydata$nb_prior_delta,.1,1)
-    diet_short <- matrix(NA, mydata$nb_species, max(mydata$nb_prey_per_species))
-    for (i in 1:(mydata$nb_species+2)) {
+    diet_short <- matrix(NA, nb_species, max(mydata$nb_prey_per_species))
+    for (i in 1:(nb_species+2)) {
       if (mydata$nb_prey_per_species[i] > 1) {
         alpha <- runif(mydata$nb_prey_per_species[i])
         diet_short[i, 1:mydata$nb_prey_per_species[i]] <-
@@ -23,13 +24,13 @@ generate_init <- function(mydata) {
       }
     }
     mean_signature_std <-
-      matrix(NA, mydata$nb_species, mydata$nb_tracer)
+      matrix(NA, nb_species, mydata$nb_tracer)
     mean_signature_std[mydata$id_source_species,] <-
       runif(length(mydata$id_source_species) * mydata$nb_tracer,-3, 1)
     random_effect <-
       matrix(
-        runif(mydata$nb_species * mydata$nb_tracer),
-        mydata$nb_species,
+        runif(nb_species * mydata$nb_tracer),
+        nb_species,
         mydata$nb_tracer
       )
     random_effect[mydata$id_source_species,] <- NA
@@ -43,6 +44,35 @@ generate_init <- function(mydata) {
                    ncol(signature_data))
     signature_data[is.na(mydata$signature_data)] <-
       random_signature[is.na(mydata$signature_data)]
+    trophic_efficiency <- mapply(function(a,b){
+      if (a==0){
+        return(NA)
+      } else {
+        return(rbeta(1, a, b))
+      }
+    }, mydata$prior_alpha, mydata$prior_beta)
+    trophic_efficiency[mydata$id_top_predator] <- NA
+    consumption_rate <- mapply(function(a,b) runif(1,a,b),
+                               mydata$min_cons_rate, mydata$max_cons_rate)
+
+    productivity <- c(rep(NA, nb_species),
+                      runif(1,
+                            mydata$min_prod[mydata$id_PP],
+                            mydata$max_prod[mydata$id_PP]))
+    A <- mapply(function(a,b) rbeta(1,a,b),
+                mydata$Aprior[,1], mydata$Aprior[,1])
+
+    uq <- mapply(function(a,b) runif(1,a,b),
+                 mydata$uq_min, mydata$uq_max)
+    tmp <- c(A*consumption_rate*(1-uq), productivity[mydata$id_PP])
+
+
+    biomass <- mapply(function(is_top,min) ifelse(is_top,runif(1,min,mydata$bmax),NA),
+                      seq_len(nb_species+1) %in% mydata$id_top_predator,
+                      (mydata$landings+mydata$discards)/tmp)
+
+
+
     list(
       mean_signature_std = mean_signature_std,
       random_effect = random_effect,
@@ -50,6 +80,12 @@ generate_init <- function(mydata) {
       diet_short = diet_short,
       delta = delta,
       delta_std =delta_std,
+      trophic_efficiency=trophic_efficiency,
+      consumption_rate=consumption_rate,
+      A=A,
+      uq=uq,
+      productivity=productivity,
+      biomass=biomass,
       .RNG.seed = chain,
       .RNG.name = c(
         "base::Super-Duper",
