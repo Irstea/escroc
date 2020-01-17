@@ -14,11 +14,7 @@ compute_diet_matrix <- function(mydata, myres, quant=c(.025,.5,.975)){
     if (diet_name %in% colnames(res_matrix)){
       return(c(i,
                j,
-               quantile(
-                 apply(res_matrix[, c(diet_name)],
-                       1,
-                       prod),
-                 quant)))
+               quantile(res_matrix[, c(diet_name)],quant)))
     } else {
       return(c(i, j, rep(0, 3)))
     }
