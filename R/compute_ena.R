@@ -1,7 +1,7 @@
   require(network)
   require(enaR)
 
-compute_ena <- function(myfit, mydata, quant=c(.025,.5,.975)){
+compute_ena <- function(myfit, mydata, quant=NULL,biomassDet=0){
   myfit_mat <- as.matrix(myfit)
   nb_species <- mydata$nb_species
   species_names <- rownames(mydata$alpha_diet)[seq_len(nb_species)]
@@ -24,6 +24,7 @@ compute_ena <- function(myfit, mydata, quant=c(.025,.5,.975)){
     notassimilated <- consump*uq
     #mortality <- production * (1 -
                 #iter[paste("trophic_efficiency[", species_names, "]", sep="")])
+    bio <- iter[grep("biomass", names(iter))]
 
     mortality_PP <- production_PP * (1 - iter["trophic_efficiency[PP]"])
     respiration <- consump- #consumption
@@ -55,19 +56,30 @@ compute_ena <- function(myfit, mydata, quant=c(.025,.5,.975)){
       mydata$discards[mydata$id_PP]
 
 
-    exports=c(mydata$landings,0)
+    exports=c(mydata$landings,ifelse(input>0,0,-input))
 
     mynetwork <- pack(t(flow),
                    respiration = c(respiration, 0, 0),
                    input = c(rep(0, nb_species),production_PP,
-                             input),
+                             ifelse(input>0,input,0)),
+                   storage=c(bio, biomassDet),
                    export = exports,
-                   living=c(rep(TRUE, nb_species + 1), FALSE),
-                   storage = rep(0, nb_species + 2))
-    tmp <- enaFlow(mynetwork)$ns
-    indices=as.vector(tmp)
-    names(indices)=colnames(tmp)
-    return(indices)})
-  apply(ena_indices,1,quantile,probs=quant,na.rm=TRUE)
+                   living=c(rep(TRUE, nb_species + 1), FALSE))
+    mtl <- c(meanTrophicLevel(mynetwork,1))
+    names(mtl) <- "MTL"
+    enaf <- enaFlow(mynetwork)$ns[1, c("TST","APL","FCI")]
+    enaf["CCI"] <- 1.142 * enaf["FCI"]
+    enaa <- enaAscendency(mynetwork)[1, ]
+    enaa["Ai_Ci"] <- enaa["A.internal"]/enaa["CAP.internal"]
+    enaa <- enaa[c("A.internal","CAP.internal","Ai_Ci","ASC","CAP","ASC","OH")]
+    tstf <- enaFlow(mynetwork)$ns[1,c("TST","TSTp")]
+    others <- c(enaa["CAP"]/tstf["TSTp"],enaAscendency(mynetwork)[1, "AMI"])
+    names(others) <- c("Flow_Div","AMI")
+    return(c(mtl, enaf, enaa, tstf, others))})
+  if (is.null(quant)){
+    return(t(ena_indices))
+  } else{
+    apply(ena_indices,1,quantile,probs=quant,na.rm=TRUE)
+  }
 }
 
