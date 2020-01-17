@@ -3,6 +3,8 @@
 
 compute_ena <- function(myfit, mydata, quant=NULL,biomassDet=0){
   myfit_mat <- as.matrix(myfit)
+  if (nrow(myfit_mat)>1000)
+    myfit_mat <- myfit_mat[seq(1, nrow(myfit_mat), length.out=1000),]
   nb_species <- mydata$nb_species
   species_names <- rownames(mydata$alpha_diet)[seq_len(nb_species)]
   id_flow <- expand.grid(species_names,
