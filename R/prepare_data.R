@@ -103,23 +103,29 @@ prepare_data <-
     combinations <-
       expand.grid(Species = id_source_species, tracer = 1:nb_tracer)
     nb_combinations <- nrow(combinations)
-    nb_prior_signature <- nrow(prior_signature_data)
-    id_prior_signature <- match(
-      paste(
-        prior_signature_data$Species,
-        prior_signature_data$tracer,
-        sep = "__"
-      ),
-      paste(species_name[combinations$Species], tracer_name[combinations$tracer], sep =
-              "__")
-    )
-    mu_prior_signature <- (prior_signature_data$mean - mean_tracer[as.character(prior_signature_data$tracer)]) /
-      sd_tracer[as.character(prior_signature_data$tracer)]
-    sd_prior_signature <- prior_signature_data$sd / sd_tracer[as.character(prior_signature_data$tracer)]
-    n_prior_signature <- prior_signature_data$n
+    if (! is.null(prior_signature_data)) {
+      nb_prior_signature <- nrow(prior_signature_data)
+      id_prior_signature <- match(
+        paste(
+          prior_signature_data$Species,
+          prior_signature_data$tracer,
+          sep = "__"
+        ),
+        paste(species_name[combinations$Species], tracer_name[combinations$tracer], sep =
+                "__")
+      )
+      mu_prior_signature <- (prior_signature_data$mean - mean_tracer[as.character(prior_signature_data$tracer)]) /
+        sd_tracer[as.character(prior_signature_data$tracer)]
+      sd_prior_signature <- prior_signature_data$sd / sd_tracer[as.character(prior_signature_data$tracer)]
+      n_prior_signature <- prior_signature_data$n
+    } else {
+      nb_prior_signature <- 0
+    }
+
     id_no_prior_signature <- 1:nrow(combinations)
-    id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
-                                                    id_prior_signature]
+    if (nb_prior_signature > 0)
+      id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
+                                                      id_prior_signature]
 
     #formatting prior delta data. A scaling is required to be constistent with signature_data
     id_prior_delta <- match(prior_delta$tracer, tracer_name)
@@ -154,10 +160,6 @@ prepare_data <-
       nb_prior_signature = nb_prior_signature,
       combinations = as.matrix(combinations),
       id_no_prior_signature = id_no_prior_signature,
-      id_prior_signature = id_prior_signature,
-      mu_prior_signature = mu_prior_signature,
-      sd_prior_signature = sd_prior_signature,
-      n_prior_signature = n_prior_signature,
       nb_combinations = nb_combinations,
       mu_prior_delta = mu_prior_delta,
       sd_prior_delta = sd_prior_delta,
@@ -172,6 +174,14 @@ prepare_data <-
     if (nb_consumer_single > 0) {
       mydata <- c(mydata,
                   list(id_consumer_single = id_consumer_single))
+    }
+
+    if (nb_prior_signature > 0){
+      mydata <- c(mydata,
+                  list(id_prior_signature = id_prior_signature,
+                       mu_prior_signature = mu_prior_signature,
+                       sd_prior_signature = sd_prior_signature,
+                       n_prior_signature = n_prior_signature))
     }
 
     return(
