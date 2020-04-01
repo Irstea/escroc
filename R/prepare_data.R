@@ -113,7 +113,7 @@ prepare_data <-
     mu_prior_signature <- (prior_signature_data$mean - mean_tracer[as.character(prior_signature_data$tracer)]) /
       sd_tracer[as.character(prior_signature_data$tracer)]
     sd_prior_signature <- prior_signature_data$sd / sd_tracer[as.character(prior_signature_data$tracer)]
-    n_prior_signature <- prior_signature_data$sd
+    n_prior_signature <- prior_signature_data$n
     id_no_prior_signature <- 1:nrow(combinations)
     id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
                                                     id_prior_signature]
