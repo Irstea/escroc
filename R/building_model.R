@@ -55,22 +55,25 @@ building_model <- function(mydata) {
 }"
 
   diet <-
-    "for (i in 1:nb_source_species){
+    paste(ifelse(mydata$nb_consumer_single > 0,
+          "for (i in 1:nb_consumer_single){
+            diet[id_consumer_single[i],1]<-1
+          }",
+          ""),
+    "
+    for (i in 1:nb_source_species){
   diet[id_source_species[i],1:nb_species]<-rep(0,nb_species)
-}
-for (i in 1:nb_consumer_single){
-  diet[id_consumer_single[i],1]<-1
 }
 for (i in 1:nb_consumer_multiple){
   diet[id_consumer_multiple[i],1:nb_prey_per_species[id_consumer_multiple[i]]]~ddirich(alpha_diet[id_consumer_multiple[i],1:nb_prey_per_species[id_consumer_multiple[i]]])
-}"
+}", sep="")
 
   compute_mean_signature <-
     "for (itra in 1:nb_tracer){
   sigma_random[itra]~dunif(0.001,10)
 }
 
-for(ispe in c(id_consumer_multiple,id_consumer_single)){
+for(ispe in c(id_consumer)){
   for (itra in 1:nb_tracer){
     random_effect[ispe,itra]~dnorm(0,1/pow(sigma_random[itra],2)) #random effect
     var_signature[ispe,itra]<-1/tau[itra]+inprod(var_signature[prey_id[ispe,1:nb_prey_per_species[ispe]],itra],diet[ispe,1:nb_prey_per_species[ispe]]*diet[ispe,1:nb_prey_per_species[ispe]]) #variance of the signature for each species and tracer

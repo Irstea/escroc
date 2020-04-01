@@ -74,6 +74,7 @@ prepare_data <-
     consumer_multiple <- names(id_consumer_multiple)
     nb_consumer_multiple <- length(consumer_multiple)
 
+
     #consumers that eat a single species for which diet should not be estimated
     id_consumer_single <-
       which(apply(prior_diet_matrix, 1, function(x)
@@ -81,6 +82,8 @@ prepare_data <-
     consumer_single <- names(id_consumer_single)
     nb_consumer_single <- length(consumer_single)
 
+    id_consumer <- c(id_consumer_multiple,
+                     id_consumer_single)
 
     #keep the identifier of the species from signature table
     id_species_signature <-
@@ -130,41 +133,49 @@ prepare_data <-
     #creation of an indicator matrix telling if the data is left censored
     isLeftCensored <- (!(is.na(signature_data) & LOQ)) *1
 
-    return(
-      list(
-        signature_data = signature_data,
-        mean_tracer = mean_tracer,
-        sd_tracer = sd_tracer,
-        isLeftCensored = isLeftCensored,
-        LOQ = LOQ,
-        nb_consumer_multiple = nb_consumer_multiple,
-        id_consumer_multiple = id_consumer_multiple,
-        nb_consumer_single = nb_consumer_single,
-        id_consumer_single = id_consumer_single,
-        nb_source_species = nb_source_species,
-        id_source_species = id_source_species,
-        nb_species = nb_species,
-        nb_tracer = nb_tracer,
-        nb_signature = nb_signature,
-        id_species_signature = id_species_signature,
-        nb_prey_per_species = nb_prey_per_species,
-        prey_id = prey_id,
-        nb_prior_signature = nb_prior_signature,
-        combinations = as.matrix(combinations),
-        id_no_prior_signature = id_no_prior_signature,
-        id_prior_signature = id_prior_signature,
-        mu_prior_signature = mu_prior_signature,
-        sd_prior_signature = sd_prior_signature,
-        n_prior_signature = n_prior_signature,
-        nb_combinations = nb_combinations,
-        mu_prior_delta = mu_prior_delta,
-        sd_prior_delta = sd_prior_delta,
-        id_prior_delta = id_prior_delta,
-        id_no_prior_delta = id_no_prior_delta,
-        nb_prior_delta = nb_prior_delta,
-        alpha_diet = alpha_diet
 
-      )
+    mydata <- list(
+      signature_data = signature_data,
+      mean_tracer = mean_tracer,
+      sd_tracer = sd_tracer,
+      isLeftCensored = isLeftCensored,
+      LOQ = LOQ,
+      nb_consumer_multiple = nb_consumer_multiple,
+      id_consumer_multiple = id_consumer_multiple,
+      nb_consumer_single = nb_consumer_single,
+      nb_source_species = nb_source_species,
+      id_source_species = id_source_species,
+      nb_species = nb_species,
+      nb_tracer = nb_tracer,
+      nb_signature = nb_signature,
+      id_species_signature = id_species_signature,
+      nb_prey_per_species = nb_prey_per_species,
+      prey_id = prey_id,
+      nb_prior_signature = nb_prior_signature,
+      combinations = as.matrix(combinations),
+      id_no_prior_signature = id_no_prior_signature,
+      id_prior_signature = id_prior_signature,
+      mu_prior_signature = mu_prior_signature,
+      sd_prior_signature = sd_prior_signature,
+      n_prior_signature = n_prior_signature,
+      nb_combinations = nb_combinations,
+      mu_prior_delta = mu_prior_delta,
+      sd_prior_delta = sd_prior_delta,
+      id_prior_delta = id_prior_delta,
+      id_no_prior_delta = id_no_prior_delta,
+      nb_prior_delta = nb_prior_delta,
+      alpha_diet = alpha_diet,
+      id_consumer = id_consumer
+
+    )
+
+    if (nb_consumer_single > 0) {
+      mydata <- c(mydata,
+                  list(id_consumer_single = id_consumer_single))
+    }
+
+    return(
+      mydata
     )
 
   }
