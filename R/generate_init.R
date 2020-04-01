@@ -24,16 +24,15 @@ generate_init <- function(mydata) {
       }
     }
     mean_signature_std <-
-      matrix(NA, nb_species, mydata$nb_tracer)
-    mean_signature_std[mydata$id_source_species,] <-
-      runif(length(mydata$id_source_species) * mydata$nb_tracer,-3, 1)
+      matrix(NA, mydata$nb_species+2, mydata$nb_tracer)
+    mean_signature_std[c(mydata$id_Det, mydata$id_PP),] <-
+      runif(2 * mydata$nb_tracer,-3, 1)
     random_effect <-
       matrix(
         runif(nb_species * mydata$nb_tracer),
         nb_species,
         mydata$nb_tracer
       )
-    random_effect[mydata$id_source_species,] <- NA
     signature_data <-
       matrix(NA,
              nrow(mydata$signature_data),

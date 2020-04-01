@@ -145,12 +145,6 @@ prepare_data <-
     }
 
 
-    ###find source species: species that eat some Det or PP
-    id_source_species <- which(rowSums(prior_diet_matrix[, c("Detritus",
-                                                             "PP")] > 0 ) > 0)
-    source_species <- names(id_source_species)
-    nb_source_species <- length(source_species)
-
     #top predators: species that are not eaten
     id_top_predator <- which(colSums(prior_diet_matrix) == 0)
     top_predator <- names(id_top_predator)
@@ -185,31 +179,42 @@ prepare_data <-
 
     #scaling the LOQ
     LOQ <- scale(LOQ, center = mean_tracer, scale = sd_tracer)
+    
+    
+
 
     #a table to store all the combination of species and tracer
     #this will be use to check wether we have prior data on signature
     combinations <-
-      expand.grid(Species = id_source_species, tracer = 1:nb_tracer)
+      expand.grid(Species = c(id_PP, id_Det), tracer = 1:nb_tracer)
     nb_combinations <- nrow(combinations)
-    nb_prior_signature <- nrow(prior_signature_data)
-    id_prior_signature <- match(
-      paste(
-        prior_signature_data$Species,
-        prior_signature_data$tracer,
-        sep = "__"
-      ),
-      paste(species_name[combinations$Species],
+    
+    if (! is.null(prior_signature_data)) {
+      nb_prior_signature <- nrow(prior_signature_data)
+      if(!all(prior_signature_data$Species %in% c("PP","Detritus")))
+        stop("prior signatures should be either on PP or Detritus")
+      id_prior_signature <- match(
+        paste(
+          prior_signature_data$Species,
+          prior_signature_data$tracer,
+          sep = "__"
+        ),
+        paste(colnames(prior_diet_matrix)[combinations$Species],
             tracer_name[combinations$tracer], sep = "__")
-    )
-    mu_prior_signature <- (prior_signature_data$mean - mean_tracer[
-                                  as.character(prior_signature_data$tracer)]) /
-      sd_tracer[as.character(prior_signature_data$tracer)]
-    sd_prior_signature <- prior_signature_data$sd /
-      sd_tracer[as.character(prior_signature_data$tracer)]
-    n_prior_signature <- prior_signature_data$sd
+      )
+      mu_prior_signature <- (prior_signature_data$mean - mean_tracer[
+                                    as.character(prior_signature_data$tracer)]) /
+        sd_tracer[as.character(prior_signature_data$tracer)]
+      sd_prior_signature <- prior_signature_data$sd /
+        sd_tracer[as.character(prior_signature_data$tracer)]
+      n_prior_signature <- prior_signature_data$n
+    } else{
+      nb_prior_signature <- 0
+    }
     id_no_prior_signature <- 1:nrow(combinations)
-    id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
-                                                    id_prior_signature]
+    if (nb_prior_signature > 0) 
+      id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
+                                                       id_prior_signature]
 
     #formatting prior delta data. A scaling is required to be constistent with
     # signature_data
@@ -254,64 +259,68 @@ prepare_data <-
     bmax <- max(mapply(function(a, b) qnorm(.999,a,b),
                        biomass[, 2],
                        biomass[, 3]))
-
-
-    return(
-      list(
-        signature_data = signature_data,
-        mean_tracer = mean_tracer,
-        sd_tracer = sd_tracer,
-        isLeftCensored = isLeftCensored,
-        LOQ = LOQ,
-        id_Det =  id_Det,
-        id_PP = id_PP,
-        id_consumer_multiple = id_consumer_multiple,
-        id_not_top_predator = id_not_top_predator,
-        id_top_predator=id_top_predator,
-        id_consumer_single = id_consumer_single,
-        id_source_species = id_source_species,
-        id_not_source_species = seq_len(nb_species)[-id_source_species],
-        nb_species = nb_species,
-        nb_tracer = nb_tracer,
-        nb_signature = nb_signature,
-        id_species_signature = id_species_signature,
-        nb_prey_per_species = nb_prey_per_species,
-        prey_id = prey_id,
-        not_prey_id=not_prey_id,
-        pred_id=pred_id,
-        nb_pred_per_species=nb_pred_per_species,
-        nb_prior_signature = nb_prior_signature,
-        combinations = as.matrix(combinations),
-        id_no_prior_signature = id_no_prior_signature,
-        id_prior_signature = id_prior_signature,
-        mu_prior_signature = mu_prior_signature,
-        sd_prior_signature = sd_prior_signature,
-        n_prior_signature = n_prior_signature,
-        nb_combinations = nb_combinations,
-        mu_prior_delta = mu_prior_delta,
-        sd_prior_delta = sd_prior_delta,
-        id_prior_delta = id_prior_delta,
-        id_no_prior_delta = id_no_prior_delta,
-        nb_prior_delta = nb_prior_delta,
-        alpha_diet = alpha_diet,
-        bmax=bmax,
-        obs_biomass=biomass[, 2],
-        sigma_biomass=biomass[,3],
-        prior_alpha=trophic_efficiency[, 2],
-        prior_beta=trophic_efficiency[, 3],
-        min_prod=productivity[, 2],
-        max_prod=productivity[, 3],
-        min_cons_rate=consumption_rate[, 2],
-        max_cons_rate=consumption_rate[, 3],
-        landings=catch[,2],
-        discards=catch[,3],
-        uq_min=uq[, 2],
-        uq_max=uq[, 3],
-        input_Det_obs=input_detritus[1, 2],
-        tau_idp=1/input_detritus[1, 3]^2,
-        Aprior=Aprior
-
-      )
+    mydata <- list(
+      signature_data = as.matrix(signature_data),
+      mean_tracer = mean_tracer,
+      sd_tracer = sd_tracer,
+      isLeftCensored = isLeftCensored,
+      LOQ = as.matrix(LOQ),
+      id_Det =  id_Det,
+      id_PP = id_PP,
+      id_consumer_multiple = id_consumer_multiple,
+      id_not_top_predator = id_not_top_predator,
+      id_top_predator=id_top_predator,
+      nb_species = nb_species,
+      nb_tracer = nb_tracer,
+      nb_signature = nb_signature,
+      id_species_signature = id_species_signature,
+      nb_prey_per_species = nb_prey_per_species,
+      prey_id = prey_id,
+      not_prey_id=not_prey_id,
+      pred_id=pred_id,
+      nb_pred_per_species=nb_pred_per_species,
+      nb_prior_signature = nb_prior_signature,
+      combinations = as.matrix(combinations),
+      id_no_prior_signature = id_no_prior_signature,
+      nb_combinations = nb_combinations,
+      mu_prior_delta = mu_prior_delta,
+      sd_prior_delta = sd_prior_delta,
+      id_prior_delta = id_prior_delta,
+      id_no_prior_delta = id_no_prior_delta,
+      nb_prior_delta = nb_prior_delta,
+      alpha_diet = alpha_diet,
+      bmax=bmax,
+      obs_biomass=biomass[, 2],
+      sigma_biomass=biomass[,3],
+      prior_alpha=trophic_efficiency[, 2],
+      prior_beta=trophic_efficiency[, 3],
+      min_prod=productivity[, 2],
+      max_prod=productivity[, 3],
+      min_cons_rate=consumption_rate[, 2],
+      max_cons_rate=consumption_rate[, 3],
+      landings=catch[,2],
+      discards=catch[,3],
+      uq_min=uq[, 2],
+      uq_max=uq[, 3],
+      input_Det_obs=input_detritus[1, 2],
+      tau_idp=1/input_detritus[1, 3]^2,
+      Aprior=Aprior
+      
     )
+    if (nb_consumer_single > 0) {
+      mydata <- c(mydata,
+                  list(id_consumer_single = id_consumer_single))
+    }
+    
+    if (nb_prior_signature > 0){
+      mydata <- c(mydata,
+                  list(id_prior_signature = id_prior_signature,
+                       mu_prior_signature = mu_prior_signature,
+                       sd_prior_signature = sd_prior_signature,
+                       n_prior_signature = n_prior_signature))
+    }
+
+
+    return(mydata)
 
   }

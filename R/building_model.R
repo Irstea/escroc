@@ -29,37 +29,32 @@ for (i in 1:nb_tracer){
 }"
 
   priors_delta_no_prior <-"
-#informative prior on enrichment/TMF
+#non informative prior on enrichment/TMF
 for (i in 1:(nb_tracer-nb_prior_delta)){
   delta_std[id_no_prior_delta[i]]~dnorm(0,.1)
   delta[id_no_prior_delta[i]]<-delta_std[id_no_prior_delta[i]]*sd_tracer[id_no_prior_delta[i]]
 }"
 
   priors_delta_with_prior <-"
-#mean signature of souces (eat Det or PP) drawn from informative prior
+#prior enrichment/TMF drawn from informative prior
 for (i in 1:(nb_prior_delta)){
   delta[id_prior_delta[i]]~dnorm(mu_prior_delta[i],1/pow(sd_prior_delta[i],2))
   delta_std[id_prior_delta[i]]<-delta[id_prior_delta[i]]/sd_tracer[id_prior_delta[i]]
 }"
 
   signature_source_no_prior <-"
-#mean signature of souces (eat Det or PP) drawn from uninformative prior
+#mean signature of Det or PP drawn from uninformative prior
 for (i in 1:(nb_combinations-nb_prior_signature)){
   mean_signature_std[combinations[id_no_prior_signature[i],1],combinations[id_no_prior_signature[i],2]]~dnorm(0.01,0.01)
   mean_signature[combinations[id_no_prior_signature[i],1],combinations[id_no_prior_signature[i],2]]<-(mean_signature_std[combinations[id_no_prior_signature[i],1],combinations[id_no_prior_signature[i],2]]*sd_tracer[combinations[id_no_prior_signature[i],2]])+mean_tracer[combinations[id_no_prior_signature[i],2]]
   tau_signature[combinations[id_no_prior_signature[i],1],combinations[id_no_prior_signature[i],2]]~dgamma(0.01,0.01)
   var_signature[combinations[id_no_prior_signature[i],1],combinations[id_no_prior_signature[i],2]]<-1/tau_signature[combinations[id_no_prior_signature[i],1],combinations[id_no_prior_signature[i],2]]
 }
-
-for (i in id_source_species){
-  for (tra in 1:nb_tracer){
-    random_effect[i,tra]<-0
-  }
-}
 "
 
 
-  signature_source_prior <-"
+  signature_source_prior <-ifelse(mydata$nb_prior_signature > 0,
+"
 #prior on the signature of source species (eat Det or PP)
 for (i in 1:nb_prior_signature){
   tau2_signature[i]~dchisq(n_prior_signature[i]-1)
@@ -67,17 +62,19 @@ for (i in 1:nb_prior_signature){
   var_signature[combinations[id_prior_signature[i],1],combinations[id_prior_signature[i],2]]<-1/tau_signature[combinations[id_prior_signature[i],1],combinations[id_prior_signature[i],2]]
   mean_signature_std[combinations[id_prior_signature[i],1],combinations[id_prior_signature[i],2]]~dnorm(mu_prior_signature[i],n_prior_signature[i]/pow(sd_prior_signature[i],2))
   mean_signature[combinations[id_prior_signature[i],1],combinations[id_prior_signature[i],2]]<-(mean_signature_std[combinations[id_prior_signature[i],1],combinations[id_prior_signature[i],2]]*sd_tracer[combinations[id_prior_signature[i],2]])+mean_tracer[combinations[id_prior_signature[i],2]]
-}"
+}",
+                                  "")
 
-  diet <-
-    "
+  diet <-paste("
 # prior for the diet based on dirichlet distribution
-#dirichlet drawns should go in contiguous array, therefore we must first
-# create a temporary object and then copy it appropriately into the diet matrix
+                  #dirichlet drawns should go in contiguous array, therefore we must first
+                  # create a temporary object and then copy it appropriately into the diet matrix",
+               ifelse(!is.null(mydata$id_consumer_single),"
 for (i in id_consumer_single){
   diet_short[id_consumer_single,1]<-1
-}
-
+}",
+                      ""),
+               "
 for (i in id_consumer_multiple){
   diet_short[i,1:nb_prey_per_species[i]]~ddirich(alpha_diet[i,1:nb_prey_per_species[i]])
 }
@@ -89,7 +86,7 @@ for (i in 1:nb_species){
     diet[i,not_prey_id[i,np]]<-0
   }
 }
-"
+", sep = "")
 
 
 #in mean signature, we should probably add the possibility to have
@@ -101,7 +98,7 @@ for (itra in 1:nb_tracer){
   sigma_random[itra]~dunif(0.001,10)
 }
 
-for(ispe in id_not_source_species){
+for(ispe in 1:nb_species){
   for (itra in 1:nb_tracer){
     random_effect[ispe,itra]~dnorm(0,1/pow(sigma_random[itra],2)) #random effect
     var_signature[ispe,itra]<-1/tau[itra]+inprod(var_signature[prey_id[ispe,1:nb_prey_per_species[ispe]],itra],diet[ispe,prey_id[ispe,1:nb_prey_per_species[ispe]]]*diet[ispe,prey_id[ispe,1:nb_prey_per_species[ispe]]]) #variance of the signature for each species and tracer
