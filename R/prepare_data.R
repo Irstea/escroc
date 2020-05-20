@@ -218,9 +218,9 @@ prepare_data <-
 
     #formatting prior delta data. A scaling is required to be constistent with
     # signature_data
+    id_no_prior_delta <- 1:nb_tracer
     if (! is.null(prior_delta)) {
       id_prior_delta <- match(prior_delta$tracer, tracer_name)
-      id_no_prior_delta <- 1:nb_tracer
       id_no_prior_delta <- id_no_prior_delta[!id_no_prior_delta %in%
                                              id_prior_delta]
       mu_prior_delta <- prior_delta$mean
@@ -288,6 +288,7 @@ prepare_data <-
       id_no_prior_signature = id_no_prior_signature,
       nb_combinations = nb_combinations,
       nb_prior_delta = nb_prior_delta,
+      id_no_prior_delta = id_no_prior_delta,
       alpha_diet = alpha_diet,
       bmax=bmax,
       obs_biomass=biomass[, 2],
@@ -324,8 +325,7 @@ prepare_data <-
       mydata <- c(mydata,
                   list(mu_prior_delta = mu_prior_delta,
                        sd_prior_delta = sd_prior_delta,
-                       id_prior_delta = id_prior_delta,
-                       id_no_prior_delta = id_no_prior_delta))
+                       id_prior_delta = id_prior_delta))
     }
 
 
