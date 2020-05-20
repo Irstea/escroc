@@ -73,9 +73,14 @@ for (i in 1:nb_consumer_multiple){
   sigma_random[itra]~dunif(0.001,10)
 }
 
-for(ispe in c(id_consumer)){
+for(ispe in 1:nb_species){
   for (itra in 1:nb_tracer){
     random_effect[ispe,itra]~dnorm(0,1/pow(sigma_random[itra],2)) #random effect
+  }
+}
+
+for(ispe in c(id_consumer)){
+  for (itra in 1:nb_tracer){
     var_signature[ispe,itra]<-1/tau[itra]+inprod(var_signature[prey_id[ispe,1:nb_prey_per_species[ispe]],itra],diet[ispe,1:nb_prey_per_species[ispe]]*diet[ispe,1:nb_prey_per_species[ispe]]) #variance of the signature for each species and tracer
     mean_signature_std[ispe,itra]<-inprod(diet[ispe,1:nb_prey_per_species[ispe]],mean_signature_std[prey_id[ispe,1:nb_prey_per_species[ispe]],itra])+random_effect[ispe,itra]+delta_std[itra]
     mean_signature[ispe,itra]<-(mean_signature_std[ispe,itra]*sd_tracer[itra])+mean_tracer[itra]
