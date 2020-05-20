@@ -179,8 +179,8 @@ prepare_data <-
 
     #scaling the LOQ
     LOQ <- scale(LOQ, center = mean_tracer, scale = sd_tracer)
-    
-    
+
+
 
 
     #a table to store all the combination of species and tracer
@@ -188,7 +188,7 @@ prepare_data <-
     combinations <-
       expand.grid(Species = c(id_PP, id_Det), tracer = 1:nb_tracer)
     nb_combinations <- nrow(combinations)
-    
+
     if (! is.null(prior_signature_data)) {
       nb_prior_signature <- nrow(prior_signature_data)
       if(!all(prior_signature_data$Species %in% c("PP","Detritus")))
@@ -212,19 +212,23 @@ prepare_data <-
       nb_prior_signature <- 0
     }
     id_no_prior_signature <- 1:nrow(combinations)
-    if (nb_prior_signature > 0) 
+    if (nb_prior_signature > 0)
       id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
                                                        id_prior_signature]
 
     #formatting prior delta data. A scaling is required to be constistent with
     # signature_data
-    id_prior_delta <- match(prior_delta$tracer, tracer_name)
-    id_no_prior_delta <- 1:nb_tracer
-    id_no_prior_delta <- id_no_prior_delta[!id_no_prior_delta %in%
+    if (! is.null(prior_delta)) {
+      id_prior_delta <- match(prior_delta$tracer, tracer_name)
+      id_no_prior_delta <- 1:nb_tracer
+      id_no_prior_delta <- id_no_prior_delta[!id_no_prior_delta %in%
                                              id_prior_delta]
-    mu_prior_delta <- prior_delta$mean
-    sd_prior_delta <- prior_delta$sd
-    nb_prior_delta <- nrow(prior_delta)
+      mu_prior_delta <- prior_delta$mean
+      sd_prior_delta <- prior_delta$sd
+      nb_prior_delta <- nrow(prior_delta)
+    } else {
+      nb_prior_delta <- 0
+    }
 
 
     #creation of an indicator matrix telling if the data is left censored
@@ -283,10 +287,6 @@ prepare_data <-
       combinations = as.matrix(combinations),
       id_no_prior_signature = id_no_prior_signature,
       nb_combinations = nb_combinations,
-      mu_prior_delta = mu_prior_delta,
-      sd_prior_delta = sd_prior_delta,
-      id_prior_delta = id_prior_delta,
-      id_no_prior_delta = id_no_prior_delta,
       nb_prior_delta = nb_prior_delta,
       alpha_diet = alpha_diet,
       bmax=bmax,
@@ -305,19 +305,27 @@ prepare_data <-
       input_Det_obs=input_detritus[1, 2],
       tau_idp=1/input_detritus[1, 3]^2,
       Aprior=Aprior
-      
+
     )
     if (nb_consumer_single > 0) {
       mydata <- c(mydata,
                   list(id_consumer_single = id_consumer_single))
     }
-    
+
     if (nb_prior_signature > 0){
       mydata <- c(mydata,
                   list(id_prior_signature = id_prior_signature,
                        mu_prior_signature = mu_prior_signature,
                        sd_prior_signature = sd_prior_signature,
                        n_prior_signature = n_prior_signature))
+    }
+
+    if (nb_prior_delta > 0) {
+      mydata <- c(mydata,
+                  list(mu_prior_delta = mu_prior_delta,
+                       sd_prior_delta = sd_prior_delta,
+                       id_prior_delta = id_prior_delta,
+                       id_no_prior_delta = id_no_prior_delta))
     }
 
 
