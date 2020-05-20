@@ -128,12 +128,16 @@ prepare_data <-
                                                       id_prior_signature]
 
     #formatting prior delta data. A scaling is required to be constistent with signature_data
-    id_prior_delta <- match(prior_delta$tracer, tracer_name)
     id_no_prior_delta <- 1:nb_tracer
-    id_no_prior_delta <- id_no_prior_delta[!id_no_prior_delta %in% id_prior_delta]
-    mu_prior_delta <- prior_delta$mean
-    sd_prior_delta <- prior_delta$sd
-    nb_prior_delta <- nrow(prior_delta)
+    if (!is.null(prior_delta)){
+      id_prior_delta <- match(prior_delta$tracer, tracer_name)
+      id_no_prior_delta <- id_no_prior_delta[!id_no_prior_delta %in% id_prior_delta]
+      mu_prior_delta <- prior_delta$mean
+      sd_prior_delta <- prior_delta$sd
+      nb_prior_delta <- nrow(prior_delta)
+    } else {
+      nb_prior_delta <- 0
+    }
 
 
     #creation of an indicator matrix telling if the data is left censored
@@ -161,11 +165,8 @@ prepare_data <-
       combinations = as.matrix(combinations),
       id_no_prior_signature = id_no_prior_signature,
       nb_combinations = nb_combinations,
-      mu_prior_delta = mu_prior_delta,
-      sd_prior_delta = sd_prior_delta,
-      id_prior_delta = id_prior_delta,
-      id_no_prior_delta = id_no_prior_delta,
       nb_prior_delta = nb_prior_delta,
+      id_no_prior_delta = id_no_prior_delta,
       alpha_diet = alpha_diet,
       id_consumer = id_consumer
 
@@ -182,6 +183,14 @@ prepare_data <-
                        mu_prior_signature = mu_prior_signature,
                        sd_prior_signature = sd_prior_signature,
                        n_prior_signature = n_prior_signature))
+    }
+
+    if (nb_prior_delta > 0) {
+      mydata <- c(mydata,
+                  list(mu_prior_delta = mu_prior_delta,
+                       sd_prior_delta = sd_prior_delta,
+                       id_prior_delta = id_prior_delta
+                  ))
     }
 
     return(

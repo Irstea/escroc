@@ -98,7 +98,7 @@ return(
     priors_delta_no_prior,
     ifelse(mydata$nb_prior_delta > 0, priors_delta_with_prior, ""),
     signature_source_no_prior,
-    ifelse(!is.null(mydata$nb_prior_signature), signature_source_prior,""),
+    ifelse(mydata$nb_prior_signature > 0, signature_source_prior,""),
     diet,
     compute_mean_signature,
     observation_process,
