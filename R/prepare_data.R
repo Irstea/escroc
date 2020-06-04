@@ -285,10 +285,8 @@ prepare_data <-
       nb_pred_per_species=nb_pred_per_species,
       nb_prior_signature = nb_prior_signature,
       combinations = as.matrix(combinations),
-      id_no_prior_signature = id_no_prior_signature,
       nb_combinations = nb_combinations,
       nb_prior_delta = nb_prior_delta,
-      id_no_prior_delta = id_no_prior_delta,
       alpha_diet = alpha_diet,
       bmax=bmax,
       obs_biomass=biomass[, 2],
@@ -308,6 +306,17 @@ prepare_data <-
       Aprior=Aprior
 
     )
+
+    if (nb_prior_delta < nb_tracer) {
+      mydata <- c(mydata,
+                  list(id_no_prior_delta = id_no_prior_delta))
+    }
+
+    if (nb_prior_signature < nb_combinations) {
+      mydata <- c(mydata,
+                  list(id_no_prior_signature = id_no_prior_signature))
+    }
+
     if (nb_consumer_single > 0) {
       mydata <- c(mydata,
                   list(id_consumer_single = id_consumer_single))

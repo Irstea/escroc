@@ -213,9 +213,11 @@ return(
   paste(
     "model{",
     priors_noise_regression,
-    priors_delta_no_prior,
+    ifelse(mydata$nb_prior_delta < mydata$nb_tracer, priors_delta_no_prior, ""),
     ifelse(mydata$nb_prior_delta > 0, priors_delta_with_prior, ""),
-    signature_source_no_prior,
+    ifelse(mydata$nb_prior_signature < mydata$nb_combinations,
+           signature_source_no_prior,
+           ""),
     ifelse(mydata$nb_prior_signature > 0, signature_source_prior,""),
     diet,
     compute_mean_signature,
