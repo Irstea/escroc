@@ -1,5 +1,7 @@
 EscrocR: a R package implementing the model ESCROC
 ==================================================
+<img src="man/figures/logo.png" align="right" width="220" />
+
 ---
 License: BSD3
 
