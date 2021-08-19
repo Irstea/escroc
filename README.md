@@ -1,5 +1,5 @@
-EscrocR: a R package implementing the model ESCROC
-==================================================
+EscrocR: a R package implementing ESCROC or EscroPATH models
+============================================================
 <img src="man/figures/logo.png" align="right" width="220" />
 
 ---

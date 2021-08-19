@@ -4,14 +4,16 @@
 \name{prior_signature_data}
 \alias{prior_signature_data}
 \title{Measurement from previous studies}
-\format{A data frame with 53940 rows and 10 variables:
+\format{
+A data frame with 53940 rows and 10 variables:
 \describe{
   \item{Species}{name of the species}
   \item{tracer}{name of the tracer, contaminant of isotopic ratio}
   \item{mean}{mean value observed on the sample (no transformation here)}
   \item{sd}{standard value observed on the sample (no transformation here)}
   \item{n}{number of samples used to estimate mean and sd}
-}}
+}
+}
 \usage{
 prior_signature_data
 }
@@ -22,6 +24,8 @@ on a give tracer. Values should be log (or log10) transformed if required,
 similarly to data in \code{\link{signature_data}}
 }
 \references{
-David (2006) Dynamique spatio-temporelle du zooplancton dans l'estuaire de la Gironde et implications au sein du réseau trophique planctonique. Ph.D. Thesis, Univ. de Bordeaux 1, 313pp
+David (2006) Dynamique spatio-temporelle du zooplancton dans
+l'estuaire de la Gironde et implications au sein du réseau trophique
+planctonique. Ph.D. Thesis, Univ. de Bordeaux 1, 313pp
 }
 \keyword{datasets}

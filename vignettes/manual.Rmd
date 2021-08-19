@@ -1,5 +1,5 @@
 ---
-title: "EscrocR: a R package implementing the model ESCROC"
+title: "EscrocR: a R package implementing models ESCROC and EscroPath"
 author: 
 - "Hilaire Drouineau - Irstea Bordeaux, UR EABX"
 - "Marine Ballutaud"
@@ -13,7 +13,7 @@ output:
     toc: yes
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Tutorial EscrocR}
+  %\VignetteIndexEntry{EscrocR: a R package implementing models ESCROC and EscroPath}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -127,11 +127,11 @@ Note that the two last arguments are optionnal and should be provided only if pr
 mymodel <- building_model(mydata)
 ```
 
-The function returns a string thats describes the model in JAGS language. The model is adapted to handle prior data if available.
+The function returns a string that describes the model in JAGS language. The model is adapted to handle prior data if available.
 Once data is ready and the model built, the model can be fitted using the function fit_escroc which is the core function of the package.
 
 ```{r}
-myresults <- fit_escroc(mydata, mymodel,burnin=1000,adapt=500,sample=1000)
+myresults <- fit_escroc(mydata, mymodel, burnin=1000, adapt=500, sample=1000)
 ```
 
 This function fits the model. Here we run the Markov Chain for 500 iteration as an adaptive phase, then 1000 iterations as burnin to ensure the chains converged. We put a too small number of iterations to have a fast running example (that's why a warning is thrown about the adaptive phase), and the number of iterations should be increased in a real case study to achieve a correct adaptation phase (adapt argument) and ensure chains convergence (burnin argument) before sampling.  
@@ -164,7 +164,7 @@ Since the returned object is a mcmc.list, usual function from package coda can b
 A summary of the posterior distribution of a species, or a set of species is provided by the functions plot_diet_species and export_diet_species. For example, here we plot a diagram displaying the posterior diet composition of the Sole
 
 ```{r fig.width=12, fig.heigth=12}
-print(plot_diet_species(myresults,mydata,"Sole"))
+print(plot_diet_species(mydata, myresults, "Sole")[[1]])
 ```
 
 Here you see that Sole diet is dominated by Gammarids, and to a lesser extent by Brown shrimp. Results can also be displayed as a table of the quantiles of the posterior distribution:

@@ -13,7 +13,8 @@ building_model(mydata)
 a string corresponding to the jags model
 }
 \description{
-Based on data, this function build the jags model that will be used by runjages
+Based on data, this function build the jags model that will be used by runjags.
+The model is either an escropath or an escroc model depeding on the data
 }
 \examples{
 #importing data

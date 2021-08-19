@@ -11,11 +11,15 @@
 #' @importFrom coda varnames
 #' @export
 reformat_results <- function(myfit, mydata) {
+  escropath <- ! is.null(mydata$obs_biomass)
+  diet_name <- ifelse(escropath,
+                      "diet_short",
+                      "diet")
   res <- as.mcmc.list(myfit)
   kept_diet <- which(!is.na(mydata$prey_id), arr.ind = TRUE)
   names_keep <-
     mapply(function(i, j)
-      paste("diet[", i, ",", j, "]", sep = ""),
+      paste0(diet_name,"[", i, ",", j, "]"),
       kept_diet[, 1],
       kept_diet[, 2])
   names_variables <- varnames(res)
@@ -24,8 +28,17 @@ reformat_results <- function(myfit, mydata) {
       grep("random_effect", names_variables),
       grep("delta", names_variables),
       grep("mean_signature", names_variables),
-      match(names_keep, names_variables)
-    )
+      match(names_keep, names_variables),
+      grep("consumption_rate", names_variables),
+      grep("trophic_efficiency", names_variables),
+      grep("uq", names_variables),
+      grep("consumption_rate", names_variables),
+      grep("productivity", names_variables),
+      grep("input_Det", names_variables),
+      grep("export_Det", names_variables),
+      grep("A", names_variables),
+      grep("biomass", names_variables))
+
   res <- res[, keep, drop = FALSE]
 
   names_variables <- varnames(res)
@@ -35,22 +48,39 @@ reformat_results <- function(myfit, mydata) {
 
   ####renaming of the varnames
   new_names <- sapply(names_variables, function(old_name) {
-    pieces <-
-      strsplit(substr(old_name, 1, nchar(old_name) - 1), c("[\\[,]"))[[1]]
-    if (startsWith(old_name, "random") ||
-        startsWith(old_name,"mean_signature")) {
-      (paste(pieces[1], "[", species_name[as.integer(pieces[2])], ",", tracer_name[as.integer(pieces[3])], "]", sep =
-                     ""))
-    } else if (startsWith(old_name, "delta")) {
-      (paste(pieces[1], "[", tracer_name[as.integer(pieces[2])], "]", sep =
-                     ""))
-    } else {
-      idspec = as.integer(pieces[2])
-      (paste(pieces[1], "[", species_name[idspec], ",", species_name[mydata$prey_id[idspec, as.integer(pieces[3])]], "]", sep =
-                     ""))
-    }
-  })
+    if (length(grep("\\[",old_name))>0){
+      pieces <-
+        strsplit(substr(old_name, 1, nchar(old_name) - 1), c("[\\[,]"))[[1]]
+      if (startsWith(old_name, "random") ||
+          startsWith(old_name,"mean_signature")) {
+        (paste0(pieces[1],
+               "[",
+               species_name[as.integer(pieces[2])],
+               ",",
+               tracer_name[as.integer(pieces[3])], "]"
+               ))
+      } else if (startsWith(old_name, "delta")) {
+        (paste(pieces[1], "[", tracer_name[as.integer(pieces[2])], "]", sep =
+                       ""))
+      } else if (startsWith(old_name,"diet")){
+        idspec = as.integer(pieces[2])
+        (paste(pieces[1],
+               "[",
+               species_name[idspec],
+               ",",
+               species_name[mydata$prey_id[idspec, as.integer(pieces[3])]], "]",
+               sep = ""))
+      } else {
+        paste(pieces[1], "[", species_name[as.integer(pieces[2])], "]", sep =
+                       "")
+
+      }
+    } else{
+      old_name
+    }})
   coda::varnames(res) <- new_names
+  if (escropath)
+    coda::varnames(res) <- gsub("diet_short", "diet", coda::varnames(res))
   return(res)
 }
 

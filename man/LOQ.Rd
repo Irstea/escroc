@@ -4,7 +4,8 @@
 \name{LOQ}
 \alias{LOQ}
 \title{Limit of quantifications}
-\format{A data frame with 53940 rows and 10 variables:
+\format{
+A data frame with 53940 rows and 10 variables:
 \describe{
   \item{FOSA}{log10 LOQ FOSA}
   \item{L.PFOS}{log10 LOQ L.PFOS}
@@ -15,7 +16,8 @@
   \item{X15N}{LOQ is meaningless for Nitrogen so we put a very low value}
 }
 
-#' @references Munoz et al. (2017) Evidence for the Trophic Transfer of Perfluoroalkylated Substances in a Temperate Macrotidal Estuary. Environmental Science & Technology: 51, 8450-8459}
+#' @references Munoz et al. (2017) Evidence for the Trophic Transfer of Perfluoroalkylated Substances in a Temperate Macrotidal Estuary. Environmental Science & Technology: 51, 8450-8459
+}
 \source{
 \url{https://pubs.acs.org/doi/abs/10.1021/acs.est.7b02399}
 }

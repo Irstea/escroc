@@ -65,21 +65,28 @@
 #'   \item{n}{number of samples used to estimate mean and sd}
 #' }
 #'
-#' @references David (2006) Dynamique spatio-temporelle du zooplancton dans l'estuaire de la Gironde et implications au sein du réseau trophique planctonique. Ph.D. Thesis, Univ. de Bordeaux 1, 313pp
+#' @references David (2006) Dynamique spatio-temporelle du zooplancton dans
+#' l'estuaire de la Gironde et implications au sein du réseau trophique
+#' planctonique. Ph.D. Thesis, Univ. de Bordeaux 1, 313pp
 "prior_signature_data"
 
 
 #' Prior diet matrix
 #'
-#' This square matrix is used to provide indicate a predator (in line) can eat a prey (in column).
+#' This square matrix is used to provide indicate a predator (in line) can
+#' eat a prey (in column).
 #' 0 indicates that this is not possible.
-#' This matrix came from Ballutaud et al. (in press) and build from analysis
+#' This matrix came from Ballutaud et al. (2019) and build from analysis
 #' made by Pasquaud et al. (2010)
 #'
 #' @format a square matrix with
 #'
-#' @references Pasqaud et al. (2010) Determination of fish trophic levels in an estuarine system. Estuarine, Coastal and Shelf Scienc: 86, 237-246
-#' @references Ballutaud et al. (in press) EStimating Contaminants tRansfers Over Complex food webs (ESCROC): an innovative Bayesian method for estimating POP's biomagnification in aquatic food webs. Science of the Total Environment
+#' @references Pasqaud et al. (2010) Determination of fish trophic levels in
+#' an estuarine system. Estuarine, Coastal and Shelf Scienc: 86, 237-246
+#' @references Ballutaud et al. (in press) EStimating Contaminants tRansfers
+#' Over Complex food webs (ESCROC): an innovative Bayesian method for
+#' estimating POP's biomagnification in aquatic food webs.
+#' Science of the Total Environment
 "prior_diet_matrix"
 
 #' Example of results

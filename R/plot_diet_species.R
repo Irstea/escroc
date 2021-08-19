@@ -1,8 +1,8 @@
 #' Plot diet
 #'
 #' Plot the diet composition of asked species
-#' @param myfit a fit as returned by \code{\link{fit_escroc}}
-#' @param mydata a list as returned by \code{\link{prepare_data}}
+#' @param mydata a list as returned by function \code{\link{prepare_data}}
+#' @param myres a fit as returned by \code{\link{fit_escroc}}
 #' @param spec_names a character or vector list containing the species names
 #' to be plotted
 #'
@@ -32,15 +32,15 @@
 #' myresults <- fit_escroc(mydata, mymodel)
 #'
 #' #plot diet
-#' print(plot_diet_species(myresults,mydata,"Sole"))
+#' print(plot_diet_species(mydata, myresults, "Sole"))
 #' @export
-plot_diet_species <- function(myfit, mydata, spec_names) {
+plot_diet_species <- function(mydata, myres, spec_names) {
   lapply(spec_names, function(spec_name) {
     if (is.na(match(spec_name, rownames(mydata$prey_id))))
       stop("the species name does not match species from diet_matrix")
     column_names <- paste("diet\\[", spec_name, sep = "")
     subset_fit <-
-      as.matrix(myfit[, grep(column_names, varnames(myfit)), drop = FALSE])
+      as.matrix(myres[, grep(column_names, varnames(myres)), drop = FALSE])
     colnames(subset_fit) <-
       sapply(colnames(subset_fit), function(old_name) {
         strsplit(substr(old_name, 1, nchar(old_name) - 1), c("[\\[,]"))[[1]][3]

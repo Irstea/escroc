@@ -4,7 +4,8 @@
 \name{signature_data}
 \alias{signature_data}
 \title{Contaminants and isotopic measures}
-\format{A data frame with 53940 rows and 10 variables:
+\format{
+A data frame with 53940 rows and 10 variables:
 \describe{
   \item{Species}{name of the species}
   \item{FOSA}{log10 concentration in FOSA}
@@ -14,7 +15,8 @@
   \item{PFUnDA}{log10 concentration in PFUnDA}
   \item{X13C}{carbon isotopic ratio}
   \item{X15N}{nitrogen isotopic ratio}
-}}
+}
+}
 \source{
 \url{https://pubs.acs.org/doi/abs/10.1021/acs.est.7b02399}
 }

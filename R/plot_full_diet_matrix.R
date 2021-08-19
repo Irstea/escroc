@@ -70,6 +70,6 @@ plot_full_diet_matrix <- function(myfit, mydata) {
     plotCI = "circle",
     is.corr = FALSE,
     tl.col = "black",
-    cl.lim = c(0.000000, 1)
+    col.lim = c(0.000000, 1)
   )
 }

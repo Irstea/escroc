@@ -4,7 +4,9 @@
 \name{myresults}
 \alias{myresults}
 \title{Example of results}
-\format{a mcmc.list}
+\format{
+a mcmc.list
+}
 \usage{
 myresults
 }

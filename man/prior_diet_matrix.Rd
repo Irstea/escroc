@@ -4,19 +4,26 @@
 \name{prior_diet_matrix}
 \alias{prior_diet_matrix}
 \title{Prior diet matrix}
-\format{a square matrix with}
+\format{
+a square matrix with
+}
 \usage{
 prior_diet_matrix
 }
 \description{
-This square matrix is used to provide indicate a predator (in line) can eat a prey (in column).
+This square matrix is used to provide indicate a predator (in line) can
+eat a prey (in column).
 0 indicates that this is not possible.
-This matrix came from Ballutaud et al. (in press) and build from analysis
+This matrix came from Ballutaud et al. (2019) and build from analysis
 made by Pasquaud et al. (2010)
 }
 \references{
-Pasqaud et al. (2010) Determination of fish trophic levels in an estuarine system. Estuarine, Coastal and Shelf Scienc: 86, 237-246
+Pasqaud et al. (2010) Determination of fish trophic levels in
+an estuarine system. Estuarine, Coastal and Shelf Scienc: 86, 237-246
 
-Ballutaud et al. (in press) EStimating Contaminants tRansfers Over Complex food webs (ESCROC): an innovative Bayesian method for estimating POP's biomagnification in aquatic food webs. Science of the Total Environment
+Ballutaud et al. (in press) EStimating Contaminants tRansfers
+Over Complex food webs (ESCROC): an innovative Bayesian method for
+estimating POP's biomagnification in aquatic food webs.
+Science of the Total Environment
 }
 \keyword{datasets}

@@ -4,26 +4,82 @@
 \alias{checking_data}
 \title{Checking data format}
 \usage{
-checking_data(prior_diet_matrix, signature_data, LOQ,
-  prior_signature_data = NULL, prior_delta = NULL)
+checking_data(
+  prior_diet_matrix,
+  signature_data,
+  LOQ,
+  prior_signature_data = NULL,
+  prior_delta = NULL,
+  biomass = NULL,
+  uq = NULL,
+  productivity = NULL,
+  consumption_rate = NULL,
+  trophic_efficiency = NULL,
+  catch = NULL,
+  input_detritus = NULL
+)
 }
 \arguments{
-\item{prior_diet_matrix}{a square matrix with similar species as colnames and rownames. Species should be consistent with Species in signature_data and prior_signature_data}
+\item{prior_diet_matrix}{a square matrix with similar species as colnames and
+rownames. Species should be consistent with Species in signature_data and
+prior_signature_data}
 
-\item{signature_data}{a data frame. First column should be names species and followning columns should correspond to tracers. Data should be transformed first if required. Left censored data and missing data should be denoted NA}
+\item{signature_data}{a data frame. First column should be names species and
+followning columns should correspond to tracers. Data should be transformed
+first if required. Left censored data and missing data should be denoted NA}
 
-\item{LOQ}{a data frame with the same number of rows as signature_data and one column per tracer. Gives the limit of detection of limit of quantification of the corresponding measure}
+\item{LOQ}{a data frame with the same number of rows as signature_data and
+one column per tracer. Gives the limit of detection of limit of
+quantification of the corresponding measure}
 
-\item{prior_signature_data}{a data frame that contains data that can be used to build a prior signature for source species. First column should be names Species and second one tracer. Species and tracers should be consistent with signature_data. Then, the three following columns correpond to the mean signature, the standard deviation and the number of samples.}
+\item{prior_signature_data}{a data frame that contains data that can be used
+to build a prior signature for source species. First column should be names
+Species and second one tracer. Species and tracers should be consistent with
+signature_data. Then, the three following columns correpond to the mean
+signature, the standard deviation and the number of samples.}
 
-\item{prior_delta}{a table that contains prior on magnification/enrichment of tracers per trophic level. First column contains the name of the tracer, second column contains the mean value and third column the standard deviation}
+\item{prior_delta}{a table that contains prior on magnification/enrichment of
+tracers per trophic level. First column contains the name of the tracer,
+second column contains the mean value and third column the standard
+deviation}
+
+\item{biomass}{a table with to set priors for biomasses of species and
+primary production (PP). First column contains the name of species and PP.
+Second column stands for the value of the observed biomass and 3rd
+to the standard error around the observation (escropath only)}
+
+\item{uq}{a table that stores for each species (first column), the minimum
+(second column) and maximum values (3rd column)
+of the prior on the proportion of unassimilated food (escropath only)}
+
+\item{productivity}{a table that stores for each species (first column),
+the minimum (second column) and maximum values (3rd column) of the prior on
+the productivity (production=productivity x biomass) (escropath only)}
+
+\item{consumption_rate}{a table that stores for each species (first column),
+the minimum (second column) and maximum values (3rd column) of the prior on
+the consumption rate (consumption=consumption rate x biomass) (escropath only)}
+
+\item{trophic_efficiency}{rate a table that stores for each species and PP
+(1st column), a (second column) and b (3rd column) of the beta prior on
+trophic efficiency (density x^(a-1)*(1-x)^(b-1)/Beta(a,b)) (escropath only)}
+
+\item{catch}{rate a table that stores for each species and PP
+(1st column), a (second column) with landings and a third with discards}
+
+\item{input_detritus}{a table with only one row (for Detritus), first column
+necessarily "Detritus". Next column indicates mean and sd (escropath only)}
 }
 \value{
-The function does not return any results but raises an error if a missformat is detected
+The function does not return any results but raises an error if a
+missformat is detected
 }
 \description{
-check that the data are correctly formated. This function can be called by the
-user and will be called by \code{\link{prepare_data}}
+check that the data are correctly formated. This function can be called by
+the
+user and will be called by \code{\link{prepare_data}}. Depending on
+provided arguments, the function detects whether it is an escropath model
+or an escroc model
 }
 \examples{
 #importing data

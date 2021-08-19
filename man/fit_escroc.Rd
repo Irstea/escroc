@@ -4,8 +4,15 @@
 \alias{fit_escroc}
 \title{Fit the model}
 \usage{
-fit_escroc(mydata, mymodel, burnin = 1000, sample = 1000,
-  adapt = 1000, method = "parallel", ...)
+fit_escroc(
+  mydata,
+  mymodel,
+  burnin = 1000,
+  sample = 1000,
+  adapt = 1000,
+  method = "parallel",
+  ...
+)
 }
 \arguments{
 \item{mydata}{a list as returned by function \code{\link{prepare_data}}}
@@ -28,8 +35,10 @@ for further details}
 a \code{\link[coda]{mcmc.list}} storing the 3 MCMC
 }
 \description{
-This is the core funtion of the packages. It fits the model ESCROC using \code{\link[runjags]{run.jags}}
-and returns an \code{\link[coda]{mcmc.list}} object. ESCROC was described in Ballutaud et al. (in press).
+This is the core funtion of the packages. It fits a model ESCROC
+or escropath using \code{\link[runjags]{run.jags}}
+and returns an \code{\link[coda]{mcmc.list}} object.
+ESCROC was described in Ballutaud et al. (2019).
 }
 \examples{
 #importing data
@@ -54,5 +63,10 @@ library(coda)
 summary(myresults)$qua
 }
 \references{
-Ballutaud et al. (in press) EStimating Contaminants tRansfers Over Complex food webs (ESCROC): an innovative Bayesian method for estimating POP's biomagnification in aquatic food webs. Science of the Total Environment
+Ballutaud, M., Drouineau, H., Carassou, L., Munoz, G., Chevillot,
+ X., Labadie, P., Budzinski, H., Lobry, J., 2019. EStimating Contaminants
+ tRansfers Over Complex food webs (ESCROC): An innovative Bayesian method for
+  estimating POP’s biomagnification in aquatic food webs. Science of The
+  Total Environment 658, 638–649.
+  https://doi.org/10.1016/j.scitotenv.2018.12.058
 }
