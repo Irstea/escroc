@@ -47,7 +47,7 @@ generate_init <- function(mydata) {
       if (a==0){
         return(NA)
       } else {
-        return(rbeta(1, a, b))
+        return(max(0.01,min(0.99,rbeta(1, a, b))))
       }
     }, mydata$prior_alpha, mydata$prior_beta)
     trophic_efficiency[mydata$id_top_predator] <- NA

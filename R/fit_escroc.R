@@ -46,7 +46,7 @@ fit_escroc <- function(mydata,mymodel,burnin=1000,sample=1000,adapt=1000,method=
                 monitor = c("random_effect", "delta","mean_signature",
                             "diet_short", "input_Det", "A",
                             "biomass", "trophic_efficiency", "productivity",
-                            "uq", "consumption_rate"),
+                            "uq", "consumption_rate","export_Det"),
                 data = mydata,
                 n.chains = 3,
                 adapt = adapt,

@@ -124,10 +124,10 @@ prepare_data <-
 
     #we avoid that all alpha_diet per line equals 1 since it can raise to
     #numerical instability in jags
-    for (i in seq_len(nb_species)) {
-      if (sum(alpha_diet[i,]==1,na.rm=TRUE)==nb_prey_per_species[i])
-        alpha_diet[i, 1:nb_prey_per_species[i]] <- .9
-    }
+    # for (i in seq_len(nb_species)) {
+    #   if (sum(alpha_diet[i,]==1,na.rm=TRUE)==nb_prey_per_species[i])
+    #     alpha_diet[i, 1:nb_prey_per_species[i]] <- .9
+    # }
 
     #pred_id is a matrix with prey in row and its predator in column
     nb_pred_per_species <- colSums(prior_diet_matrix > 0)
@@ -179,8 +179,8 @@ prepare_data <-
 
     #scaling the LOQ
     LOQ <- scale(LOQ, center = mean_tracer, scale = sd_tracer)
-
-
+    
+    
 
 
     #a table to store all the combination of species and tracer
@@ -188,7 +188,7 @@ prepare_data <-
     combinations <-
       expand.grid(Species = c(id_PP, id_Det), tracer = 1:nb_tracer)
     nb_combinations <- nrow(combinations)
-
+    
     if (! is.null(prior_signature_data)) {
       nb_prior_signature <- nrow(prior_signature_data)
       if(!all(prior_signature_data$Species %in% c("PP","Detritus")))
@@ -212,7 +212,7 @@ prepare_data <-
       nb_prior_signature <- 0
     }
     id_no_prior_signature <- 1:nrow(combinations)
-    if (nb_prior_signature > 0)
+    if (nb_prior_signature > 0) 
       id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
                                                        id_prior_signature]
 
@@ -304,7 +304,7 @@ prepare_data <-
       input_Det_obs=input_detritus[1, 2],
       tau_idp=1/input_detritus[1, 3]^2,
       Aprior=Aprior
-
+      
     )
 
     if (nb_prior_delta < nb_tracer) {
@@ -321,7 +321,7 @@ prepare_data <-
       mydata <- c(mydata,
                   list(id_consumer_single = id_consumer_single))
     }
-
+    
     if (nb_prior_signature > 0){
       mydata <- c(mydata,
                   list(id_prior_signature = id_prior_signature,

@@ -156,7 +156,7 @@ for (spe in 1:nb_species){
 }
 
 #priors for PP
-trophic_efficiency[id_PP]~dbeta(prior_alpha[id_PP],prior_beta[id_PP])
+trophic_efficiency[id_PP]~dbeta(prior_alpha[id_PP],prior_beta[id_PP]) T(0.001,0.999)
 productivity[id_PP] ~ dunif(min_prod[id_PP],max_prod[id_PP])
 
 ",
@@ -164,7 +164,7 @@ paste("trophic_efficiency[",mydata$id_not_top_predator,"]",
       ifelse(mydata$prior_alpha[mydata$id_not_top_predator] == 0,
              "<-0",
              paste("~dbeta(prior_alpha[",mydata$id_not_top_predator,
-                   "],prior_beta[",mydata$id_not_top_predator,"])",sep="")),
+                   "],prior_beta[",mydata$id_not_top_predator,"]) T(0.000001,0.999999)",sep="")),
              collapse="\n"),sep="")
 
 
@@ -203,8 +203,8 @@ consumed[id_Det]<-inprod(diet[pred_id[id_Det,1:nb_pred_per_species[id_Det]],id_D
 equilibrium <- paste("
 #For Detritus, we compute accumulation that should look like observation (input
 #or output)
-  input_Det<-consumed[id_Det]-sum(not_assimilated+other_mortality+discards)
-  input_Det_obs~dnorm(input_Det,tau_idp)
+  export_Det<-input_Det-consumed[id_Det]+sum(not_assimilated+other_mortality+discards)
+  input_Det~dnorm(input_Det_obs,tau_idp) T(0,)
 ")
 
 

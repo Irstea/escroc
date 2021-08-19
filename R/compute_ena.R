@@ -107,6 +107,7 @@ compute_ena_enatool <- function(myfit, mydata, quant=NULL,biomassDet=0,intercept
     consump <- iter[paste("consumption_rate[",species_names,"]",sep="")] *
       iter[paste("biomass[",species_names,"]",sep="")]
     input <- iter["input_Det"]
+    export <- iter["export_Det"]
     production <- iter[paste("productivity[", species_names,"]", sep="")] *
       iter[paste("biomass[",species_names,"]",sep="")]
     production_PP <- iter["productivity[PP]"] *
@@ -139,7 +140,7 @@ compute_ena_enatool <- function(myfit, mydata, quant=NULL,biomassDet=0,intercept
       mydata$discards[seq_len(nb_species)]-consumed[seq_len(nb_species)]
 
     rownames(flow) <- colnames(flow) <- rownames(mydata$alpha_diet)
-    ##we know add flows towards detritus
+    ##we now add flows towards detritus
     ####productions which is not consumed and not assimilated food got to detritus
     flow[mydata$id_Det, seq_len(nb_species) ] <- mortality+
       + notassimilated + mydata$discards[seq_len(nb_species)]
@@ -149,10 +150,11 @@ compute_ena_enatool <- function(myfit, mydata, quant=NULL,biomassDet=0,intercept
     ####flow is transposed to have from in row to to in cols as
     ####in enatool or enaR
     flow <- t(flow)
-    exports=c(mydata$landings,ifelse(intercept_det<input,0,-input+intercept_det))
+    exports=c(mydata$landings,export)
+    biomassDet=0
     inputs = c(rep(0, nb_species),production_PP,
-              ifelse(intercept_det>input,intercept_det,input))
-    mynetwork <- pack(flow,
+              input)
+    mynetwork <- enaR::pack(flow,
                       respiration = c(respiration, 0, 0),
                       input = inputs,
                       storage=c(bio, biomassDet),
@@ -164,26 +166,22 @@ compute_ena_enatool <- function(myfit, mydata, quant=NULL,biomassDet=0,intercept
                 sum((mydata$discards+mydata$landings)[k[-mydata$id_Det]]))
 
     TST <- sum(flow) + sum(respiration) +
-      sum(inputs) + sum(exports)+ sum(mydata$landings) +
+      sum(input) + sum(exports)+ sum(mydata$landings) +
       sum(mydata$landings)
 
-    APL <- TST/(sum(mydata$catch) + sum(respiration))
+    APL <- TST/(sum(exports) + sum(respiration))
 
     ###not work
     Ti <- rowSums(flow) #outflow
     Tj <- colSums(flow) #inflow
     S <- Tj + c(rep(0, mydata$nb_species + 1), #total inflow
-                ifelse(input>0,
-                       input,
-                       0))
-    SS <- Ti + c(mydata$landings, 0) + c(respiration, 0, 0) +  #total outflow
-      c(rep(0, mydata$nb_species +1),
-        ifelse(input < 0, -input, 0))
-    G <- sweep(flow, 2, S, "/")
+                input)
+    SS <- Ti + c(mydata$landings, export) + c(respiration, 0, 0)  #total outflow
+
+    G <- sweep(flow, 1, S, "/")
     G[is.nan(G) | is.infinite(G)] <- 0
     Leontief <- solve(diag(nrow(G))-G)
-    CI <- sum(S/TST *(diag(Leontief)-1)/diag(Leontief))
-    FCI <- sum(2*S/TST *(diag(Leontief)-1)/diag(Leontief))*100
+    FCI <- sum(S/TST *(diag(Leontief)-1)/diag(Leontief))*100
 
     CCI <- 1.142 * FCI
 
@@ -197,7 +195,7 @@ compute_ena_enatool <- function(myfit, mydata, quant=NULL,biomassDet=0,intercept
     #C capacity
     Ci <- - sum (ifelse(flow==0,
                        0,
-                       flow*log(flow/TST)))
+                       flow*log(flow/TST))) * 1.442695
 
     Ai_Ci <- Ai/Ci
 
@@ -216,6 +214,87 @@ compute_ena_enatool <- function(myfit, mydata, quant=NULL,biomassDet=0,intercept
   })
   t(ena_indices)
 }
+
+
+
+
+
+
+
+
+validate_ena_enatool <- function(myfit, mydata, quant=NULL,biomassDet=0,intercept_det=132628,minTL=1){
+  myfit_mat <- as.matrix(myfit)
+  if (nrow(myfit_mat)>1000)
+    myfit_mat <- myfit_mat[seq(1, nrow(myfit_mat), length.out=1000),]
+  nb_species <- mydata$nb_species
+  species_names <- rownames(mydata$alpha_diet)[seq_len(nb_species)]
+  id_flow <- expand.grid(species_names,
+                         rownames(mydata$alpha_diet))
+  ena_indices <- do.call('rbind.data.frame',apply(myfit_mat, 1, function(iter){
+    diet_name <- paste("diet[",id_flow$Var1,",",id_flow$Var2,"]",sep="")
+    bio_name <- paste("biomass[",id_flow$Var1,"]",sep="")
+    conso_name <- paste("consumption_rate[",id_flow$Var1,"]",sep="")
+    
+    
+    consump <- iter[paste("consumption_rate[",species_names,"]",sep="")] *
+      iter[paste("biomass[",species_names,"]",sep="")]
+    input <- iter["input_Det"]
+    export <- iter["export_Det"]
+    production <- iter[paste("productivity[", species_names,"]", sep="")] *
+      iter[paste("biomass[",species_names,"]",sep="")]
+    production_PP <- iter["productivity[PP]"] *
+      iter["biomass[PP]"]
+    uq <- iter[paste("uq[", species_names,"]", sep="")]
+    notassimilated <- consump*uq
+    #mortality <- production * (1 -
+    #iter[paste("trophic_efficiency[", species_names, "]", sep="")])
+    bio <- iter[grep("biomass", names(iter))]
+    
+    mortality_PP <- production_PP * (1 - iter["trophic_efficiency[PP]"])
+    respiration <- consump- #consumption
+      production-#productiib
+      notassimilated#nourriture non assimilee
+    
+    #matrix with the flow from prey (col) to predator (row)
+    flow <- matrix(ifelse(diet_name %in% names(iter),
+                          iter[diet_name],
+                          0) *
+                     iter[bio_name]*
+                     iter[conso_name],
+                   nb_species,
+                   nb_species+2,
+                   byrow=FALSE)
+    flow <- rbind(flow,
+                  matrix(0, 2, nb_species+2))
+    consumed <- colSums(flow)
+    
+    mortality<-production-mydata$landings[seq_len(nb_species)]-
+      mydata$discards[seq_len(nb_species)]-consumed[seq_len(nb_species)]
+    
+    rownames(flow) <- colnames(flow) <- rownames(mydata$alpha_diet)
+    ##we now add flows towards detritus
+    ####productions which is not consumed and not assimilated food got to detritus
+    flow[mydata$id_Det, seq_len(nb_species) ] <- mortality+
+      + notassimilated + mydata$discards[seq_len(nb_species)]
+    flow[mydata$id_Det, mydata$id_PP ] <- mortality_PP+
+      mydata$discards[mydata$id_PP]
+    
+    ####flow is transposed to have from in row to to in cols as
+    ####in enatool or enaR
+    flow <- t(flow)
+
+    
+
+    
+    data.frame(sumq0=sum(flow),
+                      sumflowdet=sum(flow[,mydata$id_Det]),
+                      sumrespi=sum(respiration),
+                      sumE=sum(mydata$landings+mydata$discards),
+                      sumEDet=export,
+                      sumImp=sum(input))
+  }))
+}
+
 
 
 

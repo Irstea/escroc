@@ -31,6 +31,7 @@ reformat_results <- function(myfit, mydata) {
       grep("consumption_rate", names_variables),
       grep("productivity", names_variables),
       grep("input_Det", names_variables),
+      grep("export_Det", names_variables),
       grep("A", names_variables),
       grep("biomass", names_variables))
 
