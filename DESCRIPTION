@@ -18,6 +18,7 @@ Imports:
     fitdistrplus
 RoxygenNote: 7.1.1
 Suggests: 
+    enaR,
     knitr,
     rmarkdown
 VignetteBuilder: knitr

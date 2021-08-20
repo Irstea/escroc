@@ -3,6 +3,7 @@
 export(building_model)
 export(checking_data)
 export(compute_diet_matrix)
+export(compute_ena)
 export(compute_flow_matrix)
 export(export_diet_species)
 export(fit_escroc)
