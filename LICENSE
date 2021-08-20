@@ -2,9 +2,9 @@ Based on <https://opensource.org/licenses/BSD-3-Clause>
 
 This is a template.  Provide completed entries of the form
 
-YEAR: 2018
-COPYRIGHT HOLDER: Irstea
-ORGANIZATION: Irstea
+YEAR: 2021
+COPYRIGHT HOLDER: INRAE
+ORGANIZATION: INRAE
 
 (separated by empty lines) as file LICENSE, and specify
 
@@ -14,7 +14,7 @@ in file DESCRIPTION.
 
 ************************************************************************
 
-Copyright (c) 2018, Irstea
+Copyright (c) 2021, INRAE
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -28,7 +28,7 @@ met:
     the documentation and/or other materials provided with the
     distribution.
 
-    Neither the name of the <ORGANIZATION> nor the names of its
+    Neither the name of the INRAE nor the names of its
     contributors may be used to endorse or promote products derived
     from this software without specific prior written permission.
 

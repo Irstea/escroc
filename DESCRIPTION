@@ -1,6 +1,6 @@
 Package: escrocR
 Title: EscrocR: a R package implementing the models ESCROC and EscroPath
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: c(person("Hilaire","Drouineau",email="hilaire.drouineau@irstea.fr",role=c("aut","cre")),
     person("Marine","Ballutaud",role=c("aut")),
     person("Jeremy","Lobry",email="jeremy.lobry@irstea.fr",role=c("aut")))
