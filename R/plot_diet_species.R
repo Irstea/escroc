@@ -10,6 +10,7 @@
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes_string
 #' @importFrom ggplot2 xlim
+#' @importFrom ggplot2 ggtitle
 #' @importFrom ggplot2 geom_density
 #' @importFrom reshape2 melt
 #' @importFrom coda varnames
@@ -50,7 +51,8 @@ plot_diet_species <- function(mydata, myres, spec_names) {
     ggplot(subset_fit_long,
            aes_string("Proportion", fill = "Species", colour = "Species")) +
       geom_density(alpha = 0.5,aes_string(y="..scaled..")) +
-      xlim(0, 1)
+      xlim(0, 1) +
+      ggtitle(spec_name)
   })
 
 }
