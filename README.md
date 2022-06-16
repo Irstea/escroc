@@ -17,7 +17,7 @@ Then, on a R console:
 
     > install.packages("devtools")
     > library(devtools)
-    > install_github("irstea/escroc",build=TRUE,build_opts = c("--no-resave-data", "--no-manual"))
+    > install_github("irstea/escroc",build=TRUE,build_opts = c("--no-resave-data", "--no-manual"), dependencies = TRUE)
 
 # Usage #
 A vignette is included in the package to explain the usage.  
