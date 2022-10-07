@@ -84,7 +84,7 @@ for (i in 1:nb_species){
   for (p in 1:nb_prey_per_species[i]){
     diet[i,prey_id[i,p]]<-diet_short[i,p]
   }
-  for (np in 1:(2+nb_species-nb_prey_per_species[i])){
+  for (np in 1:(nbcompartments-nb_prey_per_species[i])){
     diet[i,not_prey_id[i,np]]<-0
   }
 }
@@ -178,9 +178,11 @@ for (spe in id_top_predator){
 }
 
 
-production[id_PP]<-productivity[id_PP]*biomass[id_PP]
-other_mortality[id_PP]<-productivity[id_PP]*biomass[id_PP]*(1-trophic_efficiency[id_PP])
-not_assimilated[id_PP]<-0
+for (j in id_PP){
+production[j]<-productivity[j]*biomass[j]
+other_mortality[j]<-productivity[j]*biomass[j]*(1-trophic_efficiency[j])
+not_assimilated[j]<-0
+}
 "
 
 ###should we put a EE to PP and detN?
@@ -196,9 +198,10 @@ for (spe in 1:nb_species){
 }
 
 #priors for PP
-trophic_efficiency[id_PP]~dbeta(prior_alpha[id_PP],prior_beta[id_PP]) T(0.001,0.999)
-productivity[id_PP] ~ dunif(min_prod[id_PP],max_prod[id_PP])
-
+for (j in id_PP){
+trophic_efficiency[j]~dbeta(prior_alpha[j],prior_beta[j]) T(0.001,0.999)
+productivity[j] ~ dunif(min_prod[j],max_prod[j])
+}
 ",
 paste("trophic_efficiency[",mydata$id_not_top_predator,"]",
       ifelse(mydata$prior_alpha[mydata$id_not_top_predator] == 0,
@@ -217,7 +220,7 @@ for (i in id_top_predator){
 #observations of biomass
 observations_biomass <- "
 #observations of biomass
-for (i in 1:(nb_species+1)){
+for (i in c(1:nb_species, id_PP)){
   obs_biomass[i]~dnorm(biomass[i],1/pow(sigma_biomass[i],2))
 }
 "

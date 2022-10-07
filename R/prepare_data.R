@@ -98,32 +98,35 @@ prepare_data <-
     LOQ <- LOQ[, tracer_name]
 
     #retrieve the species list
-    species_name <- sort(rownames(prior_diet_matrix))
+    allnames <- species_name <- sort(rownames(prior_diet_matrix))
     if (escropath)
-      species_name <- species_name[-which(species_name %in% c("Detritus", "PP"))]
+      species_name <- species_name[which((!startsWith(species_name,"Detritus")) &
+                                           (!startsWith(species_name,"PP")))]
     nb_species <- length(species_name)
 
     #sort the prior_diet_matrix columns and rows
     if (escropath) {
+      PP <- allnames[which(startsWith(allnames, "PP"))]
       prior_diet_matrix <- prior_diet_matrix[c(species_name,
-                                               "PP",
+                                               PP,
                                                "Detritus"), ]
       prior_diet_matrix <- prior_diet_matrix[, c(species_name,
-                                                 "PP",
+                                                 PP,
                                                  "Detritus")]
 
-      id_PP <- which(colnames(prior_diet_matrix) == "PP")
+      id_PP <- which(startsWith(colnames(prior_diet_matrix), "PP"))
       id_Det <- which(colnames(prior_diet_matrix) == "Detritus")
     } else {
       prior_diet_matrix <- prior_diet_matrix[species_name, ]
       prior_diet_matrix <- prior_diet_matrix[, species_name]
     }
+    nbcompartments <- nrow(prior_diet_matrix)
 
     #reorganize the diet matrix
     #prey id is a matrix with predator in row and its preys in column
     nb_prey_per_species <- rowSums(prior_diet_matrix > 0)
     prey_id <- alpha_diet <- matrix(NA, ncol(prior_diet_matrix),
-                                  ncol(prior_diet_matrix))
+                                    ncol(prior_diet_matrix))
     for (i in 1:nrow(prior_diet_matrix)) {
       if (nb_prey_per_species[i] > 0) {
         prey_id[i, 1:nb_prey_per_species[i]] <-
@@ -132,6 +135,7 @@ prepare_data <-
           prior_diet_matrix[i, which(prior_diet_matrix[i, ] > 0)]
       }
     }
+
     rownames(alpha_diet) <- rownames(prey_id) <- rownames(prior_diet_matrix)
 
     #we avoid that all alpha_diet per line equals 1 since it can raise to
@@ -146,7 +150,7 @@ prepare_data <-
       #pred_id is a matrix with prey in row and its predator in column
       nb_pred_per_species <- colSums(prior_diet_matrix > 0)
       pred_id <- matrix(NA, ncol(prior_diet_matrix),
-                                    ncol(prior_diet_matrix))
+                        ncol(prior_diet_matrix))
       for (i in 1:ncol(prior_diet_matrix)) {
         if (nb_pred_per_species[i] > 0) {
           pred_id[i, 1:nb_pred_per_species[i]] <- which(prior_diet_matrix[, i] > 0)
@@ -216,7 +220,8 @@ prepare_data <-
     if (! is.null(prior_signature_data)) {
       nb_prior_signature <- nrow(prior_signature_data)
       if (escropath) {
-        if(!all(prior_signature_data$Species %in% c("PP","Detritus")))
+        if(!all(prior_signature_data$Species == "Detritus" |
+                startsWith(prior_signature_data$Species, "PP")))
           stop("prior signatures should be either on PP or Detritus")
       }
       id_prior_signature <- match(
@@ -226,10 +231,10 @@ prepare_data <-
           sep = "__"
         ),
         paste(colnames(prior_diet_matrix)[combinations$Species],
-            tracer_name[combinations$tracer], sep = "__")
+              tracer_name[combinations$tracer], sep = "__")
       )
       mu_prior_signature <- (prior_signature_data$mean - mean_tracer[
-                                    as.character(prior_signature_data$tracer)]) /
+        as.character(prior_signature_data$tracer)]) /
         sd_tracer[as.character(prior_signature_data$tracer)]
       sd_prior_signature <- prior_signature_data$sd /
         sd_tracer[as.character(prior_signature_data$tracer)]
@@ -241,7 +246,7 @@ prepare_data <-
     id_no_prior_signature <- 1:nrow(combinations)
     if (nb_prior_signature > 0)
       id_no_prior_signature <- id_no_prior_signature[!id_no_prior_signature %in%
-                                                      id_prior_signature]
+                                                       id_prior_signature]
 
     #formatting prior delta data. A scaling is required to be constistent with
     # signature_data
@@ -249,7 +254,7 @@ prepare_data <-
     if (! is.null(prior_delta)) {
       id_prior_delta <- match(prior_delta$tracer, tracer_name)
       id_no_prior_delta <- id_no_prior_delta[!id_no_prior_delta %in%
-                                             id_prior_delta]
+                                               id_prior_delta]
       mu_prior_delta <- prior_delta$mean
       sd_prior_delta <- prior_delta$sd
       nb_prior_delta <- nrow(prior_delta)
@@ -291,7 +296,7 @@ prepare_data <-
       bmax <- max(mapply(function(a, b) qnorm(.999,a,b),
                          biomass[, 2],
                          biomass[, 3]))
-      }
+    }
     mydata <- list(
       signature_data = as.matrix(signature_data),
       mean_tracer = mean_tracer,
@@ -322,9 +327,10 @@ prepare_data <-
                     id_source_species = id_source_species,
                     id_consumer = id_consumer))
     } else {
-    #now we add escropath objects
+      #now we add escropath objects
       mydata <- c(mydata,
-                   list(
+                  list(
+                    nbcompartments = nbcompartments,
                     not_prey_id=not_prey_id,
                     pred_id=pred_id,
                     nb_pred_per_species=nb_pred_per_species,
